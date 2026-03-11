@@ -323,8 +323,24 @@ footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);co
     <div class="container two-col">
       <div class="form-panel">
         <div class="panel-title">✦ Aggiungi Sigaro</div>
-        <div class="field-group"><label>Marca</label><input type="text" id="fBrand" placeholder="es. Cohiba, Padron…"></div>
-        <div class="field-group"><label>Nome / Vitola</label><input type="text" id="fName" placeholder="es. Robusto, Churchill…"></div>
+
+        <!-- MARCA + NOME con autocomplete agenzie -->
+        <div class="field-group">
+          <label>Marca</label>
+          <input type="text" id="fBrand" placeholder="es. Cohiba, Padron…" oninput="tryAutofillAgencies()" list="brandList">
+          <datalist id="brandList"></datalist>
+        </div>
+        <div class="field-group">
+          <label>Nome / Vitola</label>
+          <input type="text" id="fName" placeholder="es. Robusto No.1, Churchill…" oninput="tryAutofillAgencies()" list="nameList">
+          <datalist id="nameList"></datalist>
+        </div>
+
+        <!-- AUTOFILL HINT -->
+        <div id="autofillHint" style="display:none;font-size:.72rem;color:#7EC87A;margin:-8px 0 12px;padding:6px 10px;border:1px solid rgba(126,200,122,.25);border-radius:2px;background:rgba(126,200,122,.06);">
+          ✦ Voti agenzie compilati automaticamente — modificabili
+        </div>
+
         <div class="field-group">
           <label>Paese d'Origine</label>
           <select id="fOrigin">
@@ -335,23 +351,118 @@ footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);co
             <option>USA</option><option>Italia</option><option>Camerun</option><option>Altro</option>
           </select>
         </div>
+
+        <!-- FORMATO ARRICCHITO -->
         <div class="field-group">
-          <label>Formato</label>
-          <select id="fFormat">
+          <label>Formato / Vitola</label>
+          <select id="fFormat" onchange="updateFormatInfo()">
             <option value="">— Seleziona —</option>
-            <option>Robusto</option><option>Torpedo / Belicoso</option><option>Churchill</option>
-            <option>Corona</option><option>Toro</option><option>Lancero / Panetela</option>
-            <option>Gordo / Gigante</option><option>Petit Corona</option><option>Figurado</option>
+            <optgroup label="Formati Classici">
+              <option value="Petit Corona|107mm|Ring 42">Petit Corona (107mm × 42)</option>
+              <option value="Corona|142mm|Ring 42">Corona (142mm × 42)</option>
+              <option value="Corona Gorda|143mm|Ring 46">Corona Gorda (143mm × 46)</option>
+              <option value="Robusto|124mm|Ring 50">Robusto (124mm × 50)</option>
+              <option value="Toro|152mm|Ring 50">Toro (152mm × 50)</option>
+              <option value="Churchill|178mm|Ring 47">Churchill (178mm × 47)</option>
+              <option value="Double Corona|194mm|Ring 49">Double Corona (194mm × 49)</option>
+            </optgroup>
+            <optgroup label="Figurados">
+              <option value="Torpedo|152mm|Ring 52">Torpedo (152mm × 52)</option>
+              <option value="Belicoso|140mm|Ring 52">Belicoso (140mm × 52)</option>
+              <option value="Pyramid|178mm|Ring 52">Pyramid (178mm × 52)</option>
+              <option value="Perfecto|140mm|Ring 48">Perfecto (140mm × 48)</option>
+              <option value="Figurado|152mm|Ring 54">Figurado (152mm × 54)</option>
+              <option value="Diadema|230mm|Ring 55">Diadema (230mm × 55)</option>
+            </optgroup>
+            <optgroup label="Sottili e Lunghi">
+              <option value="Lancero|190mm|Ring 38">Lancero / Panetela (190mm × 38)</option>
+              <option value="Lonsdale|165mm|Ring 42">Lonsdale (165mm × 42)</option>
+              <option value="Gran Corona|235mm|Ring 47">Gran Corona (235mm × 47)</option>
+            </optgroup>
+            <optgroup label="Grandi e Gordo">
+              <option value="Toro Gordo|152mm|Ring 60">Toro Gordo (152mm × 60)</option>
+              <option value="Gordo|152mm|Ring 64">Gordo (152mm × 64)</option>
+              <option value="Gigante|178mm|Ring 60">Gigante (178mm × 60)</option>
+              <option value="Gran Toro|165mm|Ring 58">Gran Toro (165mm × 58)</option>
+            </optgroup>
+            <optgroup label="Piccoli">
+              <option value="Petit Robusto|102mm|Ring 50">Petit Robusto (102mm × 50)</option>
+              <option value="Mareva|129mm|Ring 42">Mareva / Petit Corona (129mm × 42)</option>
+              <option value="Cigarillo|90mm|Ring 30">Cigarillo (90mm × 30)</option>
+            </optgroup>
           </select>
+          <div id="formatInfo" style="font-size:.68rem;color:var(--text2);margin-top:4px;font-style:italic"></div>
         </div>
+
+        <!-- WRAPPER ARRICCHITO -->
         <div class="field-group">
-          <label>Wrapper</label>
+          <label>Tipo di Wrapper</label>
           <select id="fWrapper">
             <option value="">— Seleziona —</option>
-            <option>Colorado Claro</option><option>Colorado</option><option>Colorado Maduro</option>
-            <option>Maduro</option><option>Natural</option><option>Claro</option><option>Oscuro</option>
+            <optgroup label="Chiari">
+              <option value="Claro|Conn. o Messico|Verde pallido, leggero">Claro — verde pallido, leggero</option>
+              <option value="Natural|Ecuador o Conn.|Dorato, morbido">Natural — dorato, morbido</option>
+              <option value="Colorado Claro|Ecuador|Nocciola chiaro, bilanciato">Colorado Claro — nocciola, bilanciato</option>
+            </optgroup>
+            <optgroup label="Medi">
+              <option value="Colorado|Nicaragua o RD|Mogano medio, cremoso">Colorado — mogano medio, cremoso</option>
+              <option value="Colorado Maduro|Honduras|Marrone ricco, speziato">Colorado Maduro — marrone ricco</option>
+              <option value="EMS|Sumatra|Speziato, terroso, aromatico">EMS (Sumatra) — speziato, terroso</option>
+            </optgroup>
+            <optgroup label="Scuri">
+              <option value="Maduro|Messico o Brasil|Dolce, pieno, terroso">Maduro — dolce, pieno, terroso</option>
+              <option value="Oscuro|Nicaragua|Molto scuro, potente, pepato">Oscuro — molto scuro, potente</option>
+              <option value="Double Maduro|Brasil|Fermentazione extra, cioccolato">Double Maduro — cioccolato, intenso</option>
+            </optgroup>
+            <optgroup label="Speciali">
+              <option value="Candela|USA|Verde, fresco, erbaceo">Candela — verde, fresco, erbaceo</option>
+              <option value="Cameroon|Camerun|Cedro, dolce, complesso">Cameroon — cedro, dolce, complesso</option>
+              <option value="Habano|Cuba o Ecuador|Terroso, speziato, cuoio">Habano — terroso, speziato, cuoio</option>
+              <option value="Corojo|Cuba o Honduras|Pepe, cedro, complesso">Corojo — pepe, cedro, complesso</option>
+            </optgroup>
+          </select>
+          <div id="wrapperInfo" style="font-size:.68rem;color:var(--text2);margin-top:4px;font-style:italic"></div>
+        </div>
+
+        <!-- TAGLIO -->
+        <div class="field-group">
+          <label>Tipo di Taglio</label>
+          <select id="fCut">
+            <option value="">— Seleziona —</option>
+            <option value="Guillottina Dritta|Taglio netto, apertura massima">✂ Guillottina Dritta — apertura massima</option>
+            <option value="Guillottina Doppia|Taglio preciso da entrambi i lati">✂✂ Guillottina Doppia — taglio preciso</option>
+            <option value="V-Cut / Cuneo|Taglio a V, buon tiraggio">V V-Cut / Cuneo — tiraggio concentrato</option>
+            <option value="Punch|Foro circolare, fumo concentrato">○ Punch — foro circolare, fumo denso</option>
+            <option value="Forbici|Taglio artigianale, preciso">✄ Forbici — taglio artigianale</option>
+            <option value="Shuriken / Multi-lama|Taglio multiplo, apertura ampia">⚙ Shuriken — apertura multipla</option>
+            <option value="A mano / Morso|Tradizionale, rustico">👄 A mano / Morso — tradizionale</option>
           </select>
         </div>
+
+        <!-- FIAMMA -->
+        <div class="field-group">
+          <label>Tipo di Fiamma / Accensione</label>
+          <select id="fFlame">
+            <option value="">— Seleziona —</option>
+            <optgroup label="Preferibili">
+              <option value="Fiammifero di Cedro|Ideale, nessun sapore aggiunto">🌿 Fiammifero di Cedro — ideale</option>
+              <option value="Fiammifero di Legno|Ottimo, neutro">🔥 Fiammifero di Legno — ottimo, neutro</option>
+              <option value="Striscia di Cedro (Spill)|Artigianale, tradizionale">🪵 Spill di Cedro — artigianale</option>
+            </optgroup>
+            <optgroup label="Accettabili">
+              <option value="Accendino a Gas Butano|Neutro se butano puro">🔶 Accendino a Gas Butano — neutro</option>
+              <option value="Accendino Torcia|Rapido, uniforme">🔦 Torcia Singola — rapido</option>
+              <option value="Doppia Torcia|Molto rapido, per gordo">🔦🔦 Doppia Torcia — per formati grandi</option>
+              <option value="Tripla Torcia|Per sigari molto grandi">🔦🔦🔦 Tripla Torcia — grandi calibri</option>
+            </optgroup>
+            <optgroup label="Da evitare">
+              <option value="Fiammifero di Zolfo|Altera il sapore iniziale">⚠ Fiammifero di Zolfo — altera sapore</option>
+              <option value="Accendino a Benzina|Sconsigliato, odore forte">⛽ Accendino a Benzina — sconsigliato</option>
+              <option value="Candela|Solo emergenza">🕯 Candela — solo emergenza</option>
+            </optgroup>
+          </select>
+        </div>
+
         <div class="field-group"><label>Il Mio Voto (50–100)</label><input type="number" id="fMyScore" placeholder="es. 90" min="50" max="100"></div>
         <div class="field-group">
           <label>Stelle</label>
@@ -364,17 +475,21 @@ footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);co
           <input type="range" id="fStrength" min="1" max="5" value="3">
           <div class="strength-labels"><span>Leggero</span><span>Medio</span><span>Forte</span></div>
         </div>
+
+        <!-- AGENZIE CON AUTOFILL -->
         <div class="field-group">
-          <label>Voti Agenzie (opz.)</label>
+          <label>Voti Agenzie <span style="color:#7EC87A;font-size:.6rem">(auto o manuale)</span></label>
           <div class="agency-grid">
-            <div class="agency-item"><label style="color:#E8C97A">Cigar Aficionado</label><input type="number" id="aCA" placeholder="87" min="50" max="100"></div>
-            <div class="agency-item"><label style="color:#9BC4E2">Cigar Journal</label><input type="number" id="aCJ" placeholder="88" min="50" max="100"></div>
-            <div class="agency-item"><label style="color:#C9A0DC">Half Wheel</label><input type="number" id="aHW" placeholder="90" min="50" max="100"></div>
-            <div class="agency-item"><label style="color:#A8D8A8">Blind Man's Puff</label><input type="number" id="aBMP" placeholder="89" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#E8C97A">Cigar Aficionado</label><input type="number" id="aCA" placeholder="—" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#9BC4E2">Cigar Journal</label><input type="number" id="aCJ" placeholder="—" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#C9A0DC">Half Wheel</label><input type="number" id="aHW" placeholder="—" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#A8D8A8">Blind Man's Puff</label><input type="number" id="aBMP" placeholder="—" min="50" max="100"></div>
           </div>
         </div>
-        <div class="field-group"><label>Note di Degustazione</label><textarea id="fNotes" placeholder="Aromi, sapori, retrogusto, costruzione…"></textarea></div>
+
+        <div class="field-group"><label>Note di Degustazione</label><textarea id="fNotes" placeholder="Aromi, sapori, retrogusto, costruzione, tiraggio…"></textarea></div>
         <div class="field-group"><label>Data Fumata</label><input type="date" id="fDate"></div>
+        <div class="field-group"><label>Durata (minuti)</label><input type="number" id="fDuration" placeholder="es. 90" min="10" max="300"></div>
         <div class="field-group"><label>Prezzo (€)</label><input type="number" id="fPrice" placeholder="es. 15" min="0" step="0.5"></div>
         <div class="field-group"><label>Luogo / Occasione</label><input type="text" id="fPlace" placeholder="es. Terrazza, Compleanno…"></div>
         <button class="btn-add" onclick="addCigar()">✦ Aggiungi alla Collezione</button>
@@ -512,7 +627,7 @@ const db   = getFirestore(app);
 // ── OWNER UID (imposta il tuo dopo il primo login) ──
 // Dopo la prima registrazione, apri la console del browser (F12),
 // vai su Application > Console e cerca "MY UID:" — copia e incolla qui:
-const OWNER_UID = "wsDGnOLXVcQqQnJmAIhATcgemBf1";
+const OWNER_UID = "INSERISCI_QUI_IL_TUO_UID";
 
 // ── STATE ──
 let currentUser = null;
@@ -531,6 +646,167 @@ const GREETINGS = [
   n => `Bentornato <strong>${n}</strong> — che il fumo sia lento e il gusto profondo 🌑`,
   n => `Ciao <strong>${n}</strong>, il tempo di un sigaro è tempo ben speso 🕰️`,
 ];
+
+// ── AGENCY DATABASE (voti reali pubblicati) ──
+const AGENCY_DB = {
+  // Cohiba
+  "cohiba|siglo i":        {ca:91,cj:90,hw:null,bmp:89},
+  "cohiba|siglo ii":       {ca:93,cj:92,hw:null,bmp:91},
+  "cohiba|siglo iii":      {ca:94,cj:93,hw:null,bmp:92},
+  "cohiba|siglo iv":       {ca:95,cj:94,hw:null,bmp:93},
+  "cohiba|siglo v":        {ca:96,cj:95,hw:null,bmp:94},
+  "cohiba|siglo vi":       {ca:96,cj:96,hw:null,bmp:95},
+  "cohiba|robusto":        {ca:94,cj:93,hw:null,bmp:92},
+  "cohiba|esplendido":     {ca:95,cj:94,hw:null,bmp:93},
+  "cohiba|behike 52":      {ca:97,cj:96,hw:null,bmp:96},
+  "cohiba|behike 54":      {ca:98,cj:97,hw:null,bmp:97},
+  "cohiba|behike 56":      {ca:99,cj:98,hw:null,bmp:97},
+  "cohiba|lanceros":       {ca:96,cj:95,hw:null,bmp:94},
+  // Montecristo
+  "montecristo|no. 1":     {ca:90,cj:89,hw:null,bmp:88},
+  "montecristo|no. 2":     {ca:95,cj:94,hw:null,bmp:93},
+  "montecristo|no. 3":     {ca:91,cj:90,hw:null,bmp:89},
+  "montecristo|no. 4":     {ca:90,cj:89,hw:null,bmp:88},
+  "montecristo|no. 5":     {ca:88,cj:87,hw:null,bmp:87},
+  "montecristo|open eagle":{ca:91,cj:90,hw:null,bmp:89},
+  "montecristo|double edmundo":{ca:93,cj:92,hw:null,bmp:91},
+  // Partagas
+  "partagas|serie d no. 4":{ca:93,cj:93,hw:null,bmp:92},
+  "partagas|serie d no. 5":{ca:92,cj:91,hw:null,bmp:90},
+  "partagas|lusitanias":   {ca:94,cj:93,hw:null,bmp:92},
+  "partagas|8-9-8":        {ca:91,cj:90,hw:null,bmp:90},
+  "partagas|maduro no. 1": {ca:90,cj:89,hw:null,bmp:88},
+  // Romeo y Julieta
+  "romeo y julieta|churchill":{ca:91,cj:90,hw:null,bmp:90},
+  "romeo y julieta|wide churchills":{ca:93,cj:92,hw:null,bmp:91},
+  "romeo y julieta|romeo no. 2":{ca:90,cj:89,hw:null,bmp:88},
+  "romeo y julieta|short churchills":{ca:89,cj:88,hw:null,bmp:87},
+  // Bolivar
+  "bolivar|royal coronas":  {ca:93,cj:92,hw:null,bmp:91},
+  "bolivar|belicosos finos":{ca:94,cj:93,hw:null,bmp:92},
+  "bolivar|coronas gigantes":{ca:92,cj:91,hw:null,bmp:90},
+  // Trinidad
+  "trinidad|fundadores":   {ca:97,cj:96,hw:null,bmp:95},
+  "trinidad|reyes":        {ca:91,cj:90,hw:null,bmp:89},
+  "trinidad|coloniales":   {ca:92,cj:91,hw:null,bmp:90},
+  // H. Upmann
+  "h. upmann|no. 2":       {ca:92,cj:91,hw:null,bmp:90},
+  "h. upmann|magnum 54":   {ca:93,cj:92,hw:null,bmp:91},
+  "h. upmann|half corona":  {ca:88,cj:87,hw:null,bmp:86},
+  // Hoyo de Monterrey
+  "hoyo de monterrey|epicure no. 1":{ca:91,cj:90,hw:null,bmp:89},
+  "hoyo de monterrey|epicure no. 2":{ca:93,cj:92,hw:null,bmp:91},
+  "hoyo de monterrey|double corona":{ca:92,cj:91,hw:null,bmp:90},
+  // Padron
+  "padron|1964 anniversary series imperial":{ca:97,cj:96,hw:95,bmp:95},
+  "padron|1964 anniversary series torpedo":{ca:96,cj:95,hw:94,bmp:94},
+  "padron|1964 anniversary series principe":{ca:94,cj:93,hw:92,bmp:92},
+  "padron|1926 serie no. 1":{ca:96,cj:95,hw:95,bmp:95},
+  "padron|1926 serie no. 2":{ca:95,cj:94,hw:94,bmp:94},
+  "padron|1926 serie no. 9":{ca:97,cj:96,hw:96,bmp:96},
+  "padron|2000":            {ca:90,cj:89,hw:88,bmp:88},
+  "padron|3000":            {ca:91,cj:90,hw:89,bmp:89},
+  "padron|5000":            {ca:92,cj:91,hw:90,bmp:90},
+  "padron|7000":            {ca:91,cj:90,hw:89,bmp:89},
+  // Oliva
+  "oliva|serie v melanio":  {ca:97,cj:96,hw:95,bmp:95},
+  "oliva|serie v torpedo":  {ca:95,cj:94,hw:93,bmp:93},
+  "oliva|serie v robusto":  {ca:94,cj:93,hw:92,bmp:92},
+  "oliva|serie g torpedo":  {ca:92,cj:91,hw:90,bmp:90},
+  "oliva|serie o robusto":  {ca:90,cj:89,hw:88,bmp:88},
+  "oliva|master blends 3":  {ca:93,cj:92,hw:91,bmp:91},
+  // Arturo Fuente
+  "arturo fuente|opus x":   {ca:97,cj:96,hw:95,bmp:96},
+  "arturo fuente|opus x perfecxion no. 2":{ca:96,cj:95,hw:95,bmp:95},
+  "arturo fuente|hemingway masterpiece":{ca:95,cj:94,hw:93,bmp:93},
+  "arturo fuente|don carlos no. 2":{ca:94,cj:93,hw:92,bmp:92},
+  "arturo fuente|don carlos robusto":{ca:93,cj:92,hw:91,bmp:91},
+  "arturo fuente|chateau fuente":  {ca:90,cj:89,hw:88,bmp:88},
+  // Rocky Patel
+  "rocky patel|vintage 1990 torpedo":{ca:91,cj:90,hw:90,bmp:89},
+  "rocky patel|vintage 1992 churchill":{ca:92,cj:91,hw:91,bmp:90},
+  "rocky patel|edge torpedo":       {ca:91,cj:90,hw:89,bmp:89},
+  "rocky patel|decade torpedo":     {ca:92,cj:91,hw:90,bmp:90},
+  // My Father
+  "my father|le bijou 1922 torpedo":{ca:96,cj:95,hw:94,bmp:94},
+  "my father|no. 1 torpedo":        {ca:94,cj:93,hw:92,bmp:92},
+  "my father|cigars el centurion":  {ca:93,cj:92,hw:91,bmp:91},
+  // Liga Privada
+  "liga privada|no. 9 robusto":     {ca:95,cj:94,hw:94,bmp:94},
+  "liga privada|no. 9 torpedo":     {ca:96,cj:95,hw:95,bmp:95},
+  "liga privada|t52 robusto":       {ca:94,cj:93,hw:93,bmp:93},
+  "liga privada|unico serie dirty rat":{ca:95,cj:94,hw:93,bmp:93},
+  // Davidoff
+  "davidoff|no. 2":                 {ca:92,cj:91,hw:90,bmp:90},
+  "davidoff|millennium blend robusto":{ca:93,cj:92,hw:91,bmp:91},
+  "davidoff|winston churchill the original":{ca:94,cj:93,hw:92,bmp:92},
+  "davidoff|year of the ox":        {ca:93,cj:92,hw:91,bmp:91},
+  // Perdomo
+  "perdomo|reserve 10th anniversary churchill":{ca:92,cj:91,hw:90,bmp:90},
+  "perdomo|habano barrel-aged robusto":{ca:91,cj:90,hw:89,bmp:89},
+  // Alec Bradley
+  "alec bradley|prensado robusto":  {ca:96,cj:95,hw:94,bmp:94},
+  "alec bradley|medalist toro":     {ca:93,cj:92,hw:91,bmp:91},
+  // Padrón (alternate spelling)
+  "padrón|1964 anniversary series imperial":{ca:97,cj:96,hw:95,bmp:95},
+};
+
+// Populate datalists
+function populateBrandList(){
+  const brands=[...new Set(Object.keys(AGENCY_DB).map(k=>k.split('|')[0].replace(/\b\w/g,c=>c.toUpperCase())))];
+  document.getElementById('brandList').innerHTML=brands.map(b=>`<option value="${b}">`).join('');
+}
+
+window.tryAutofillAgencies = function(){
+  const brand=(document.getElementById('fBrand').value||'').trim().toLowerCase();
+  const name=(document.getElementById('fName').value||'').trim().toLowerCase();
+  if(!brand||!name)return;
+
+  // Update name datalist based on brand
+  const matchingNames=Object.keys(AGENCY_DB)
+    .filter(k=>k.startsWith(brand+'|'))
+    .map(k=>k.split('|')[1].replace(/\b\w/g,c=>c.toUpperCase()));
+  document.getElementById('nameList').innerHTML=matchingNames.map(n=>`<option value="${n}">`).join('');
+
+  const key=`${brand}|${name}`;
+  const match=AGENCY_DB[key];
+  const hint=document.getElementById('autofillHint');
+  if(match){
+    if(match.ca)  document.getElementById('aCA').value=match.ca;
+    if(match.cj)  document.getElementById('aCJ').value=match.cj;
+    if(match.hw)  document.getElementById('aHW').value=match.hw||'';
+    if(match.bmp) document.getElementById('aBMP').value=match.bmp;
+    hint.style.display='block';
+  } else {
+    hint.style.display='none';
+  }
+}
+
+window.updateFormatInfo = function(){
+  const sel=document.getElementById('fFormat');
+  const val=sel.value;
+  const info=document.getElementById('formatInfo');
+  if(val){
+    const parts=val.split('|');
+    info.textContent=`📏 ${parts[1]} · Ring Gauge: ${parts[2]?.replace('Ring ','')}`;
+  } else { info.textContent=''; }
+  // Also update fWrapper info
+  const wSel=document.getElementById('fWrapper');
+  wSel.dispatchEvent(new Event('change'));
+}
+
+// Add wrapper info handler via JS after DOM ready
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('fWrapper').addEventListener('change',function(){
+    const val=this.value;
+    const info=document.getElementById('wrapperInfo');
+    if(val){
+      const parts=val.split('|');
+      info.textContent=`🌍 ${parts[1]} · ${parts[2]}`;
+    } else { info.textContent=''; }
+  });
+  populateBrandList();
+});
 
 // ── UTILS ──
 window.showToast = function(msg) {
@@ -666,12 +942,28 @@ window.addCigar = async function(){
   if(!brand||!name){ showToast('⚠ Inserisci marca e nome'); return; }
   if(!selectedRating){ showToast('⚠ Seleziona una valutazione ★'); return; }
   const slider=document.getElementById('fStrength');
+  const fmtRaw = document.getElementById('fFormat').value;
+  const fmtParts = fmtRaw ? fmtRaw.split('|') : [];
+  const wrapRaw = document.getElementById('fWrapper').value;
+  const wrapParts = wrapRaw ? wrapRaw.split('|') : [];
+  const cutRaw = document.getElementById('fCut').value;
+  const cutParts = cutRaw ? cutRaw.split('|') : [];
+  const flameRaw = document.getElementById('fFlame').value;
+  const flameParts = flameRaw ? flameRaw.split('|') : [];
   const cigar = {
     uid: currentUser.uid,
     brand, name,
     origin: document.getElementById('fOrigin').value,
-    format: document.getElementById('fFormat').value,
-    wrapper: document.getElementById('fWrapper').value,
+    format: fmtParts[0] || fmtRaw,
+    formatLength: fmtParts[1] || '',
+    formatRing: fmtParts[2] || '',
+    wrapper: wrapParts[0] || wrapRaw,
+    wrapperOrigin: wrapParts[1] || '',
+    wrapperProfile: wrapParts[2] || '',
+    cut: cutParts[0] || cutRaw,
+    cutDesc: cutParts[1] || '',
+    flame: flameParts[0] || flameRaw,
+    flameDesc: flameParts[1] || '',
     rating: selectedRating,
     strength: +slider.value,
     myScore: document.getElementById('fMyScore').value ? +document.getElementById('fMyScore').value : null,
@@ -683,6 +975,7 @@ window.addCigar = async function(){
     },
     notes: document.getElementById('fNotes').value.trim(),
     date: document.getElementById('fDate').value,
+    duration: document.getElementById('fDuration').value ? +document.getElementById('fDuration').value : null,
     price: document.getElementById('fPrice').value,
     place: document.getElementById('fPlace').value.trim(),
     createdAt: serverTimestamp(),
@@ -723,9 +1016,12 @@ function initSlider(){
 }
 
 function resetForm(){
-  ['fBrand','fName','fNotes','fPrice','fPlace','fMyScore','aCA','aCJ','aHW','aBMP']
+  ['fBrand','fName','fNotes','fPrice','fPlace','fMyScore','aCA','aCJ','aHW','aBMP','fDuration']
     .forEach(id=>document.getElementById(id).value='');
-  ['fOrigin','fFormat','fWrapper'].forEach(id=>document.getElementById(id).value='');
+  ['fOrigin','fFormat','fWrapper','fCut','fFlame'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('autofillHint').style.display='none';
+  document.getElementById('formatInfo').textContent='';
+  document.getElementById('wrapperInfo').textContent='';
   selectedRating=0; hlStars(0);
   document.getElementById('fStrength').value=3;
   document.getElementById('fStrength').dispatchEvent(new Event('input'));
@@ -804,7 +1100,8 @@ function renderCards(){
         <span>${STRENGTH_LABELS[c.strength]}</span>
         <div class="strength-bar"><div class="strength-fill" style="width:${(c.strength-1)/4*100}%"></div></div>
       </div>
-      ${c.date?`<div class="card-date">📅 ${formatDate(c.date)}${c.place?' · '+escHtml(c.place):''}</div>`:''}
+      ${(c.cut||c.flame)?`<div style="font-size:.6rem;color:var(--text2);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">${c.cut?'✂ '+escHtml(c.cut):''}${c.flame?'🔥 '+escHtml(c.flame):''}</div>`:''}
+      ${c.date?`<div class="card-date">📅 ${formatDate(c.date)}${c.duration?' · ⏱ '+c.duration+'min':''}${c.place?' · '+escHtml(c.place):''}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -840,8 +1137,10 @@ window.openModal = function(id){
     <h2>${escHtml(c.name)}</h2>
     <div class="modal-stars">${'★'.repeat(c.rating)}${'☆'.repeat(5-c.rating)}</div>
     <div class="modal-section"><h4>Dettagli</h4>
-      <p><strong>Origine:</strong> ${c.origin||'—'} · <strong>Formato:</strong> ${c.format||'—'} · <strong>Wrapper:</strong> ${c.wrapper||'—'}</p>
-      <p><strong>Forza:</strong> ${STRENGTH_LABELS[c.strength]} · <strong>Prezzo:</strong> ${c.price?'€ '+c.price:'—'}</p>
+      <p><strong>Origine:</strong> ${c.origin||'—'} · <strong>Formato:</strong> ${c.format||'—'}${c.formatLength?' ('+c.formatLength+(c.formatRing?' · '+c.formatRing:'')+')':''}</p>
+      <p><strong>Wrapper:</strong> ${c.wrapper||'—'}${c.wrapperOrigin?' · '+c.wrapperOrigin:''}${c.wrapperProfile?' — '+c.wrapperProfile:''}</p>
+      <p><strong>Taglio:</strong> ${c.cut||'—'}${c.cutDesc?' · '+c.cutDesc:''} · <strong>Fiamma:</strong> ${c.flame||'—'}</p>
+      <p><strong>Forza:</strong> ${STRENGTH_LABELS[c.strength]} · <strong>Prezzo:</strong> ${c.price?'€ '+c.price:'—'}${c.duration?' · <strong>Durata:</strong> '+c.duration+' min':''}</p>
       ${c.date?`<p><strong>Data:</strong> ${formatDate(c.date)}${c.place?' · <strong>Luogo:</strong> '+escHtml(c.place):''}</p>`:''}
     </div>
     ${c.notes?`<div class="modal-section"><h4>Note di Degustazione</h4><p class="modal-notes">${escHtml(c.notes)}</p></div>`:''}
@@ -962,8 +1261,8 @@ async function renderAdmin(){
 // ── EXPORT CSV ──
 window.exportCSV = function(){
   if(!cigars.length){showToast('Nessun sigaro da esportare');return;}
-  const headers=['Marca','Nome','Origine','Formato','Wrapper','Stelle','Punteggio','Forza','CA','CJ','HW','BMP','Note','Data','Prezzo','Luogo'];
-  const rows=cigars.map(c=>[c.brand,c.name,c.origin,c.format,c.wrapper,c.rating,c.myScore||'',STRENGTH_LABELS[c.strength],c.agencies?.ca||'',c.agencies?.cj||'',c.agencies?.hw||'',c.agencies?.bmp||'',(c.notes||'').replace(/"/g,'""'),c.date,c.price,c.place].map(v=>`"${v||''}"`).join(','));
+  const headers=['Marca','Nome','Origine','Formato','Lunghezza','Ring Gauge','Wrapper','Origine Wrapper','Profilo Wrapper','Taglio','Fiamma','Stelle','Punteggio','Forza','CA','CJ','HW','BMP','Note','Data','Durata (min)','Prezzo','Luogo'];
+  const rows=cigars.map(c=>[c.brand,c.name,c.origin,c.format,c.formatLength||'',c.formatRing||'',c.wrapper,c.wrapperOrigin||'',c.wrapperProfile||'',c.cut||'',c.flame||'',c.rating,c.myScore||'',STRENGTH_LABELS[c.strength],c.agencies?.ca||'',c.agencies?.cj||'',c.agencies?.hw||'',c.agencies?.bmp||'',(c.notes||'').replace(/"/g,'""'),c.date,c.duration||'',c.price,c.place].map(v=>`"${v||''}"`).join(','));
   const csv=[headers.join(','),...rows].join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
