@@ -7,1410 +7,969 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/* ══════════════════════════════════════
-   CSS VARIABLES – DARK & LIGHT THEMES
-══════════════════════════════════════ */
 :root {
   --gold: #C9A84C;
   --gold-light: #E8C97A;
   --gold-dim: rgba(201,168,76,0.18);
   --transition: 0.3s ease;
 }
-
 [data-theme="dark"] {
-  --bg: #0D0603;
-  --bg2: #1A0D05;
-  --surface: rgba(107,58,31,0.12);
-  --surface2: rgba(26,13,5,0.7);
-  --border: rgba(201,168,76,0.2);
-  --text: #F5EDD8;
-  --text2: #8B7355;
-  --text3: #D4C4A8;
-  --header-glow: rgba(201,168,76,0.08);
-  --card-hover: 0 12px 40px rgba(0,0,0,0.5);
-  --input-bg: rgba(0,0,0,0.35);
-  --table-alt: rgba(255,255,255,0.02);
-  --shadow: rgba(0,0,0,0.6);
+  --bg: #0D0603; --bg2: #1A0D05;
+  --surface: rgba(107,58,31,0.12); --surface2: rgba(26,13,5,0.7);
+  --border: rgba(201,168,76,0.2); --text: #F5EDD8; --text2: #8B7355; --text3: #D4C4A8;
+  --input-bg: rgba(0,0,0,0.35); --table-alt: rgba(255,255,255,0.02);
+  --card-hover: 0 12px 40px rgba(0,0,0,0.5); --shadow: rgba(0,0,0,0.6);
 }
-
 [data-theme="light"] {
-  --bg: #F5EDD8;
-  --bg2: #EDE0C4;
-  --surface: rgba(107,58,31,0.06);
-  --surface2: rgba(240,228,205,0.9);
-  --border: rgba(107,58,31,0.2);
-  --text: #2A1208;
-  --text2: #7A5C3A;
-  --text3: #4A3020;
-  --header-glow: rgba(107,58,31,0.06);
-  --card-hover: 0 12px 40px rgba(107,58,31,0.15);
-  --input-bg: rgba(255,255,255,0.6);
-  --table-alt: rgba(107,58,31,0.04);
-  --shadow: rgba(107,58,31,0.2);
+  --bg: #F5EDD8; --bg2: #EDE0C4;
+  --surface: rgba(107,58,31,0.06); --surface2: rgba(240,228,205,0.9);
+  --border: rgba(107,58,31,0.2); --text: #2A1208; --text2: #7A5C3A; --text3: #4A3020;
+  --input-bg: rgba(255,255,255,0.6); --table-alt: rgba(107,58,31,0.04);
+  --card-hover: 0 12px 40px rgba(107,58,31,0.15); --shadow: rgba(107,58,31,0.2);
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;min-height:100vh;transition:background var(--transition),color var(--transition);background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(201,168,76,0.015) 2px,rgba(201,168,76,0.015) 4px);}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+/* ── AUTH SCREEN ── */
+#authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.auth-box{background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:4px;padding:48px 40px;max-width:420px;width:100%;text-align:center;animation:fadeIn .5s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.auth-logo{font-size:52px;display:block;margin-bottom:12px;animation:floatSmoke 3s ease-in-out infinite;filter:drop-shadow(0 0 16px rgba(201,168,76,.35));}
+@keyframes floatSmoke{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.auth-title{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;}
+.auth-sub{font-size:.8rem;color:var(--text2);letter-spacing:.25em;text-transform:uppercase;margin-top:4px;margin-bottom:32px;}
+.auth-tabs{display:flex;border:1px solid var(--border);border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.auth-tab{flex:1;padding:10px;background:transparent;border:none;color:var(--text2);font-family:'Cormorant Garamond',serif;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:var(--gold-dim);color:var(--gold);}
+.auth-field{margin-bottom:14px;text-align:left;}
+.auth-field label{display:block;font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text2);margin-bottom:5px;}
+.auth-field input{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-family:'Cormorant Garamond',serif;font-size:1rem;border-radius:2px;outline:none;transition:border-color .2s;}
+.auth-field input:focus{border-color:rgba(201,168,76,.55);}
+.auth-hint{font-size:.78rem;color:var(--text2);font-style:italic;margin-bottom:16px;line-height:1.5;}
+.btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,#6B3A1F,#3B1F0A);border:1px solid var(--gold);color:var(--gold);font-family:'Playfair Display',serif;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .25s;margin-top:4px;}
+.btn-auth:hover{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1A0D05;box-shadow:0 4px 24px rgba(201,168,76,.3);}
+.auth-error{color:#C87A7A;font-size:.82rem;margin-top:10px;min-height:18px;}
+.auth-ornament{color:var(--gold);opacity:.4;letter-spacing:.4em;margin:20px 0 8px;}
 
-body {
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: 'Cormorant Garamond', serif;
-  min-height: 100vh;
-  transition: background-color var(--transition), color var(--transition);
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(201,168,76,0.015) 2px, rgba(201,168,76,0.015) 4px);
-}
+/* ── APP ── */
+#appScreen{display:none;}
+header{text-align:center;padding:44px 20px 28px;border-bottom:1px solid var(--border);position:relative;background:linear-gradient(180deg,rgba(201,168,76,.05) 0%,transparent 100%);}
+.header-actions{position:absolute;top:14px;right:16px;display:flex;gap:8px;}
+.icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold);}
+.logo-icon{font-size:42px;display:block;margin-bottom:10px;animation:floatSmoke 3s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(201,168,76,.3));}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.8rem);color:var(--gold);letter-spacing:.12em;text-transform:uppercase;}
+.greeting{font-size:1.05rem;color:var(--text3);margin-top:6px;font-style:italic;letter-spacing:.05em;}
+.greeting strong{color:var(--gold);font-style:normal;}
+.ornament{color:var(--gold);font-size:.9rem;margin:10px 0;opacity:.45;letter-spacing:.4em;}
 
-/* ══════════════ HEADER ══════════════ */
-header {
-  text-align: center;
-  padding: 50px 20px 30px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  background: linear-gradient(180deg, var(--header-glow) 0%, transparent 100%);
-}
+/* ── STATS ── */
+.stats-bar{display:flex;justify-content:center;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.stat{text-align:center;padding:16px 24px;border-right:1px solid var(--border);flex:1;min-width:110px;}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);display:block;}
+.stat-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-top:2px;}
 
-.header-top {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 20px;
-  position: absolute;
-  top: 16px; right: 16px;
-  gap: 10px;
-}
+/* ── NAV ── */
+.nav-tabs{display:flex;justify-content:center;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:13px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'Cormorant Garamond',serif;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;margin-bottom:-1px;}
+.nav-tab:hover{color:var(--gold);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-tab.admin-tab{color:#C9A0DC;}
+.nav-tab.admin-tab.active{color:#C9A0DC;border-bottom-color:#C9A0DC;}
 
-.icon-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text2);
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-.icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+/* ── PAGES ── */
+.page{display:none;}.page.active{display:block;}
+.container{max-width:1280px;margin:0 auto;padding:32px 20px;}
+.two-col{display:grid;grid-template-columns:310px 1fr;gap:32px;align-items:start;}
+@media(max-width:800px){.two-col{grid-template-columns:1fr;}}
 
-.logo-icon {
-  font-size: 44px;
-  display: block;
-  margin-bottom: 10px;
-  animation: floatSmoke 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 16px rgba(201,168,76,0.35));
-}
-@keyframes floatSmoke {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
+/* ── FORM ── */
+.form-panel{background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:3px;padding:26px;position:sticky;top:20px;}
+.panel-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--gold);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.field-group{margin-bottom:14px;}
+label{display:block;font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text2);margin-bottom:5px;}
+input,select,textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-family:'Cormorant Garamond',serif;font-size:.95rem;border-radius:2px;transition:border-color .2s,background var(--transition);outline:none;}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,168,76,.55);}
+select option{background:var(--bg2);color:var(--text);}
+textarea{resize:vertical;min-height:78px;}
+.stars-input{display:flex;gap:4px;margin-top:3px;}
+.stars-input span{font-size:1.65rem;cursor:pointer;color:rgba(201,168,76,.22);transition:color .15s,transform .15s;user-select:none;line-height:1;}
+.stars-input span:hover,.stars-input span.active{color:var(--gold);transform:scale(1.15);}
+input[type="range"]{padding:0;border:none;background:transparent;-webkit-appearance:none;height:4px;cursor:pointer;}
+input[type="range"]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--gold) 0%,var(--gold) var(--pct,50%),var(--border) var(--pct,50%));border-radius:2px;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;background:var(--gold);border-radius:50%;margin-top:-4.5px;cursor:pointer;box-shadow:0 0 8px rgba(201,168,76,.45);}
+.strength-labels{display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.12em;color:var(--text2);margin-top:3px;}
+.agency-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.agency-item{display:flex;flex-direction:column;gap:3px;}
+.agency-item label{margin:0;}
+.btn-add{width:100%;padding:12px;background:linear-gradient(135deg,#6B3A1F,#3B1F0A);border:1px solid var(--gold);color:var(--gold);font-family:'Playfair Display',serif;font-size:.9rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .25s;margin-top:6px;}
+.btn-add:hover{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1A0D05;box-shadow:0 4px 24px rgba(201,168,76,.3);}
 
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  color: var(--gold);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
+/* ── COLLECTION ── */
+.collection-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.panel-title-main{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--gold);}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:5px 13px;background:transparent;border:1px solid var(--border);color:var(--text2);font-family:'Cormorant Garamond',serif;font-size:.8rem;letter-spacing:.1em;cursor:pointer;border-radius:2px;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+.search-export{display:flex;gap:8px;margin-bottom:16px;}
+.search-wrap{flex:1;position:relative;}
+.search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.78rem;opacity:.4;z-index:1;}
+.search-wrap input{padding-left:32px;}
+.btn-export{padding:8px 14px;background:transparent;border:1px solid var(--border);color:var(--text2);font-family:'Cormorant Garamond',serif;font-size:.8rem;letter-spacing:.1em;cursor:pointer;border-radius:2px;transition:all .2s;white-space:nowrap;}
+.btn-export:hover{border-color:var(--gold);color:var(--gold);}
+.sort-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.sort-row select{width:auto;padding:6px 10px;font-size:.8rem;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.card{background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:3px;padding:20px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;animation:cardIn .4s ease both;cursor:pointer;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.card:hover{transform:translateY(-4px);border-color:rgba(201,168,76,.38);box-shadow:var(--card-hover);}
+.card-brand{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;}
+.card-name{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text);margin-bottom:7px;line-height:1.2;}
+.card-stars{color:var(--gold);font-size:.9rem;margin-bottom:7px;letter-spacing:2px;}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.tag{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--border);color:var(--text2);border-radius:1px;}
+.tag.origin{color:#7EC87A;border-color:rgba(126,200,122,.3);}
+.tag.format{color:#C8A878;border-color:rgba(200,168,120,.3);}
+.tag.price{color:var(--gold);border-color:var(--gold-dim);}
+.card-notes{font-size:.86rem;color:var(--text3);line-height:1.5;font-style:italic;border-top:1px solid var(--border);padding-top:8px;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-strength{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
+.strength-bar{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.strength-fill{height:100%;background:linear-gradient(to right,#7EC87A,var(--gold),#C85050);border-radius:2px;}
+.card-agency-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+.ab{font-size:.56rem;letter-spacing:.08em;padding:2px 5px;border-radius:1px;border:1px solid;}
+.ab.ca{color:#E8C97A;border-color:rgba(232,201,122,.3);background:rgba(232,201,122,.06);}
+.ab.cj{color:#9BC4E2;border-color:rgba(155,196,226,.3);background:rgba(155,196,226,.06);}
+.ab.hw{color:#C9A0DC;border-color:rgba(201,160,220,.3);background:rgba(201,160,220,.06);}
+.ab.bmp{color:#A8D8A8;border-color:rgba(168,216,168,.3);background:rgba(168,216,168,.06);}
+.card-date{font-size:.6rem;color:var(--text2);margin-top:7px;opacity:.7;}
+.card-delete{position:absolute;top:8px;right:8px;background:transparent;border:none;color:rgba(200,80,80,.28);cursor:pointer;font-size:.85rem;padding:4px;transition:color .2s;}
+.card-delete:hover{color:rgba(200,80,80,.9);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text2);grid-column:1/-1;}
+.empty-state .big-icon{font-size:3.5rem;display:block;margin-bottom:12px;opacity:.3;}
+.empty-state h3{font-family:'Playfair Display',serif;color:var(--gold);opacity:.4;margin-bottom:6px;}
 
-.subtitle {
-  font-size: 0.95rem;
-  color: var(--text2);
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  margin-top: 6px;
-  font-weight: 300;
-}
+/* ── COMPARE TABLE ── */
+.comp-section{margin-bottom:32px;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--gold);margin-bottom:4px;}
+.section-desc{font-size:.83rem;color:var(--text2);margin-bottom:18px;}
+.comp-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:3px;}
+.comp-table{width:100%;border-collapse:collapse;font-size:.86rem;}
+.comp-table th{padding:11px 13px;text-align:left;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap;cursor:pointer;user-select:none;}
+.comp-table th:hover{color:var(--gold);}
+.comp-table td{padding:11px 13px;border-bottom:1px solid rgba(201,168,76,.05);vertical-align:middle;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table tr:nth-child(even){background:var(--table-alt);}
+.comp-table tr:hover{background:var(--gold-dim);}
+.score-cell{font-family:'Playfair Display',serif;font-size:1.05rem;}
+.score-mine{color:var(--gold);}
+.score-agency{color:var(--text3);}
+.score-na{color:var(--text2);opacity:.4;font-size:.78rem;}
+.diff-badge{display:inline-block;padding:2px 6px;border-radius:10px;font-size:.7rem;font-weight:600;}
+.diff-pos{background:rgba(126,200,122,.12);color:#7EC87A;border:1px solid rgba(126,200,122,.25);}
+.diff-neg{background:rgba(200,122,122,.12);color:#C87A7A;border:1px solid rgba(200,122,122,.25);}
+.diff-neu{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,.25);}
 
-.ornament { color: var(--gold); font-size: 1rem; margin: 12px 0; opacity: 0.5; letter-spacing: 0.4em; }
+/* ── CHARTS ── */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+.chart-card{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:22px;}
+.chart-card h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.05rem;margin-bottom:14px;}
+.chart-wrap{position:relative;height:210px;}
 
-/* ══════════════ NAV TABS ══════════════ */
-.nav-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.nav-tabs::-webkit-scrollbar { display: none; }
+/* ── TOP ── */
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:14px;padding:36px 20px 18px;flex-wrap:wrap;}
+.podium-item{text-align:center;width:155px;}
+.podium-box{border:1px solid var(--border);padding:16px 12px;border-radius:3px;background:var(--surface2);cursor:pointer;transition:transform .2s;}
+.podium-box:hover{transform:translateY(-3px);}
+.podium-rank{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);margin-bottom:5px;}
+.podium-1 .podium-rank{font-size:2.5rem;}
+.podium-brand{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);}
+.podium-name{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--text);margin:3px 0;}
+.podium-stars{color:var(--gold);font-size:.82rem;}
+.podium-bar{height:3px;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;margin-top:10px;}
 
-.nav-tab {
-  padding: 14px 22px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--text2);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.85rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  margin-bottom: -1px;
-}
-.nav-tab:hover { color: var(--gold); }
-.nav-tab.active {
-  color: var(--gold);
-  border-bottom-color: var(--gold);
-}
+/* ── ADMIN ── */
+.admin-banner{background:linear-gradient(135deg,rgba(201,160,220,.08),rgba(201,160,220,.03));border:1px solid rgba(201,160,220,.25);border-radius:3px;padding:16px 22px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.admin-banner .admin-icon{font-size:1.6rem;}
+.admin-banner h3{font-family:'Playfair Display',serif;color:#C9A0DC;font-size:1.1rem;}
+.admin-banner p{font-size:.82rem;color:var(--text2);}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:28px;}
+.admin-stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:20px;text-align:center;}
+.admin-stat-num{font-family:'Playfair Display',serif;font-size:2.2rem;color:#C9A0DC;display:block;}
+.admin-stat-label{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-top:3px;}
+.user-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:3px;}
+.user-table{width:100%;border-collapse:collapse;font-size:.86rem;}
+.user-table th{padding:11px 14px;text-align:left;font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface2);}
+.user-table td{padding:11px 14px;border-bottom:1px solid rgba(201,168,76,.05);}
+.user-table tr:last-child td{border-bottom:none;}
+.user-table tr:nth-child(even){background:var(--table-alt);}
+.code-badge{font-family:monospace;font-size:.82rem;background:rgba(201,160,220,.08);border:1px solid rgba(201,160,220,.2);color:#C9A0DC;padding:3px 8px;border-radius:3px;letter-spacing:.1em;}
+.joined-date{font-size:.78rem;color:var(--text2);}
+.privacy-note{font-size:.78rem;color:var(--text2);font-style:italic;margin-top:14px;padding:12px 16px;border:1px solid var(--border);border-radius:2px;background:var(--surface);}
 
-/* ══════════════ STATS BAR ══════════════ */
-.stats-bar {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--border);
-}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:30px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;animation:modalIn .25s ease;position:relative;}
+@keyframes modalIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+.modal-close{position:absolute;top:12px;right:12px;background:transparent;border:none;color:var(--text2);cursor:pointer;font-size:1.15rem;transition:color .2s;}
+.modal-close:hover{color:var(--gold);}
+.modal h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;margin-bottom:4px;}
+.modal .modal-brand{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;}
+.modal .modal-stars{color:var(--gold);font-size:1.3rem;margin-bottom:14px;letter-spacing:3px;}
+.modal-section{margin-top:16px;}
+.modal-section h4{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text2);margin-bottom:7px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+.modal-notes{font-style:italic;color:var(--text3);line-height:1.7;font-size:.93rem;}
+.mini-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.82rem;}
+.mini-table th{color:var(--text2);font-weight:400;letter-spacing:.15em;font-size:.62rem;text-transform:uppercase;padding:5px 6px;border-bottom:1px solid var(--border);text-align:left;}
+.mini-table td{padding:6px 6px;border-bottom:1px solid rgba(201,168,76,.05);}
+.mini-table tr:last-child td{border-bottom:none;}
+.mini-table tr.my-row td{color:var(--gold);font-weight:600;}
 
-.stat {
-  text-align: center;
-  padding: 18px 28px;
-  border-right: 1px solid var(--border);
-  flex: 1;
-  min-width: 120px;
-}
-.stat:last-child { border-right: none; }
-
-.stat-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  color: var(--gold);
-  display: block;
-}
-
-.stat-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text2);
-  margin-top: 2px;
-}
-
-/* ══════════════ PAGES ══════════════ */
-.page { display: none; }
-.page.active { display: block; }
-
-/* ══════════════ CONTAINER ══════════════ */
-.container {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 36px 20px;
-}
-
-.two-col {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 36px;
-  align-items: start;
-}
-@media(max-width:800px){ .two-col{ grid-template-columns:1fr; } }
-
-/* ══════════════ FORM ══════════════ */
-.form-panel {
-  background: linear-gradient(160deg, var(--surface) 0%, var(--surface2) 100%);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 28px;
-  position: sticky;
-  top: 20px;
-  transition: background var(--transition), border-color var(--transition);
-}
-
-.panel-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
-  color: var(--gold);
-  margin-bottom: 22px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.field-group { margin-bottom: 16px; }
-
-label {
-  display: block;
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--text2);
-  margin-bottom: 5px;
-}
-
-input, select, textarea {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 9px 12px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  border-radius: 2px;
-  transition: border-color 0.2s, background var(--transition), color var(--transition);
-  outline: none;
-}
-input:focus, select:focus, textarea:focus {
-  border-color: rgba(201,168,76,0.55);
-  box-shadow: 0 0 0 2px rgba(201,168,76,0.07);
-}
-select option { background: var(--bg2); color: var(--text); }
-textarea { resize: vertical; min-height: 80px; }
-
-/* STARS */
-.stars-input { display: flex; gap: 5px; margin-top: 4px; }
-.stars-input span {
-  font-size: 1.7rem;
-  cursor: pointer;
-  color: rgba(201,168,76,0.22);
-  transition: color 0.15s, transform 0.15s;
-  user-select: none;
-  line-height: 1;
-}
-.stars-input span:hover, .stars-input span.active { color: var(--gold); transform: scale(1.15); }
-
-/* RANGE */
-input[type="range"] {
-  padding: 0; border: none; background: transparent;
-  -webkit-appearance: none; height: 4px; cursor: pointer;
-}
-input[type="range"]::-webkit-slider-runnable-track {
-  height: 4px;
-  background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct,50%), var(--border) var(--pct,50%));
-  border-radius: 2px;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 13px; height: 13px;
-  background: var(--gold);
-  border-radius: 50%;
-  margin-top: -4.5px;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(201,168,76,0.45);
-}
-.strength-labels { display: flex; justify-content: space-between; font-size: 0.6rem; letter-spacing: 0.12em; color: var(--text2); margin-top: 3px; }
-
-/* AGENCY SCORES */
-.agency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.agency-item { display: flex; flex-direction: column; gap: 4px; }
-.agency-item label { margin: 0; }
-.agency-item input { padding: 7px 10px; }
-
-/* SUBMIT */
-.btn-add {
-  width: 100%;
-  padding: 13px;
-  background: linear-gradient(135deg, #6B3A1F, #3B1F0A);
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-family: 'Playfair Display', serif;
-  font-size: 0.95rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: all 0.25s;
-  margin-top: 8px;
-}
-.btn-add:hover {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: #1A0D05;
-  box-shadow: 0 4px 24px rgba(201,168,76,0.3);
-}
-
-/* ══════════════ COLLECTION ══════════════ */
-.collection-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-.panel-title-main { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold); }
-
-.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.filter-btn {
-  padding: 5px 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text2);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.82rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: all 0.2s;
-}
-.filter-btn:hover, .filter-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
-
-.search-export { display: flex; gap: 10px; margin-bottom: 18px; align-items: center; }
-.search-wrap { flex: 1; position: relative; }
-.search-wrap::before { content: '🔍'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; opacity: 0.4; z-index: 1; }
-.search-wrap input { padding-left: 34px; }
-
-.btn-export {
-  padding: 9px 16px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text2);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.82rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.btn-export:hover { border-color: var(--gold); color: var(--gold); }
-
-/* SORT/FILTER ROW */
-.sort-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.sort-row select { width: auto; padding: 6px 10px; font-size: 0.82rem; }
-
-/* CARDS */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 18px;
-}
-
-.card {
-  background: linear-gradient(160deg, var(--surface) 0%, var(--surface2) 100%);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 22px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s, background var(--transition);
-  animation: cardIn 0.4s ease both;
-  cursor: pointer;
-}
-@keyframes cardIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-.card:hover { transform: translateY(-4px); border-color: rgba(201,168,76,0.38); box-shadow: var(--card-hover); }
-.card::before {
-  content:''; position:absolute; top:0; right:0;
-  width:50px; height:50px;
-  background: radial-gradient(circle at top right, rgba(201,168,76,0.07), transparent 70%);
-  pointer-events: none;
-}
-
-.card-brand { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
-.card-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
-.card-stars { color: var(--gold); font-size: 0.95rem; margin-bottom: 8px; letter-spacing: 2px; }
-.card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-.tag { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 7px; border: 1px solid var(--border); color: var(--text2); border-radius: 1px; }
-.tag.origin { color: #7EC87A; border-color: rgba(126,200,122,0.3); }
-.tag.format { color: #C8A878; border-color: rgba(200,168,120,0.3); }
-.tag.price { color: var(--gold); border-color: var(--gold-dim); }
-
-.card-notes { font-size: 0.88rem; color: var(--text3); line-height: 1.5; font-style: italic; border-top: 1px solid var(--border); padding-top: 9px; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-.card-strength { margin-top: 9px; display: flex; align-items: center; gap: 7px; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); }
-.strength-bar { flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
-.strength-fill { height:100%; background: linear-gradient(to right, #7EC87A, var(--gold), #C85050); border-radius:2px; }
-
-/* AGENCY MINI BADGES ON CARD */
-.card-agencies { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.agency-badge { font-size: 0.58rem; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 1px; border: 1px solid; }
-.agency-badge.ca { color: #E8C97A; border-color: rgba(232,201,122,0.3); background: rgba(232,201,122,0.06); }
-.agency-badge.cj { color: #9BC4E2; border-color: rgba(155,196,226,0.3); background: rgba(155,196,226,0.06); }
-.agency-badge.hw { color: #C9A0DC; border-color: rgba(201,160,220,0.3); background: rgba(201,160,220,0.06); }
-.agency-badge.bmp { color: #A8D8A8; border-color: rgba(168,216,168,0.3); background: rgba(168,216,168,0.06); }
-
-.card-date { font-size: 0.6rem; color: var(--text2); margin-top: 8px; opacity: 0.7; }
-.card-delete { position:absolute; top:9px; right:9px; background:transparent; border:none; color:rgba(200,80,80,0.28); cursor:pointer; font-size:0.9rem; padding:4px; transition:color 0.2s; line-height:1; }
-.card-delete:hover { color: rgba(200,80,80,0.9); }
-
-/* EXPAND DETAIL */
-.card-detail { display: none; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
-.card-detail.open { display: block; }
-.card-detail p { font-size: 0.88rem; color: var(--text3); line-height: 1.6; margin-bottom: 6px; }
-.card-detail strong { color: var(--text2); font-weight: 600; }
-
-/* COMPARISON TABLE IN CARD */
-.mini-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.82rem; }
-.mini-table th { color: var(--text2); font-weight: 400; letter-spacing: 0.15em; font-size: 0.65rem; text-transform: uppercase; padding: 5px 6px; border-bottom: 1px solid var(--border); text-align: left; }
-.mini-table td { padding: 6px 6px; border-bottom: 1px solid rgba(201,168,76,0.05); }
-.mini-table tr:last-child td { border-bottom: none; }
-.mini-table tr.my-row td { color: var(--gold); font-weight: 600; }
-.score-diff.pos { color: #7EC87A; }
-.score-diff.neg { color: #C87A7A; }
-.score-diff.neu { color: var(--text2); }
-
-/* SCORE BAR IN TABLE */
-.score-bar-wrap { display: flex; align-items: center; gap: 6px; }
-.score-bar { height: 3px; border-radius: 2px; background: var(--gold); flex-shrink: 0; }
-
-/* EMPTY */
-.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); grid-column: 1/-1; }
-.empty-state .big-icon { font-size: 3.5rem; display: block; margin-bottom: 14px; opacity: 0.35; }
-.empty-state h3 { font-family: 'Playfair Display', serif; color: var(--gold); opacity: 0.45; margin-bottom: 6px; }
-
-/* ══════════════ TOP 3 PODIUM ══════════════ */
-.podium { display: flex; justify-content: center; align-items: flex-end; gap: 16px; padding: 40px 20px 20px; flex-wrap: wrap; }
-.podium-item { text-align: center; width: 160px; }
-.podium-box {
-  border: 1px solid var(--border);
-  padding: 16px 12px;
-  border-radius: 3px;
-  background: var(--surface2);
-  position: relative;
-  transition: transform 0.2s;
-}
-.podium-box:hover { transform: translateY(-3px); }
-.podium-rank { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); margin-bottom: 6px; }
-.podium-1 .podium-rank { font-size: 2.5rem; }
-.podium-brand { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); }
-.podium-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--text); margin: 4px 0; }
-.podium-stars { color: var(--gold); font-size: 0.85rem; }
-.podium-bar { height: 4px; background: linear-gradient(to right, var(--gold), var(--gold-light)); border-radius: 2px; margin-top: 12px; }
-.podium-height { margin-top: 8px; font-size: 0.7rem; color: var(--text2); }
-
-/* ══════════════ COMPARISON TABLE PAGE ══════════════ */
-.comp-section { margin-bottom: 36px; }
-.section-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); margin-bottom: 4px; }
-.section-desc { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; }
-
-.comp-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 3px; }
-.comp-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-.comp-table th {
-  padding: 12px 14px;
-  text-align: left;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text2);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface2);
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
-}
-.comp-table th:hover { color: var(--gold); }
-.comp-table th .sort-arrow { opacity: 0.4; font-size: 0.7rem; }
-.comp-table th.sorted { color: var(--gold); }
-.comp-table th.sorted .sort-arrow { opacity: 1; }
-
-.comp-table td { padding: 12px 14px; border-bottom: 1px solid rgba(201,168,76,0.05); vertical-align: middle; }
-.comp-table tr:last-child td { border-bottom: none; }
-.comp-table tr:nth-child(even) { background: var(--table-alt); }
-.comp-table tr:hover { background: var(--gold-dim); }
-
-.score-cell { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
-.score-mine { color: var(--gold); }
-.score-agency { color: var(--text3); }
-.score-na { color: var(--text2); opacity: 0.4; font-size: 0.8rem; }
-
-.diff-badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; }
-.diff-pos { background: rgba(126,200,122,0.12); color: #7EC87A; border: 1px solid rgba(126,200,122,0.25); }
-.diff-neg { background: rgba(200,122,122,0.12); color: #C87A7A; border: 1px solid rgba(200,122,122,0.25); }
-.diff-neu { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
-
-.agency-logo { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; }
-.agency-ca { color: #E8C97A; }
-.agency-cj { color: #9BC4E2; }
-.agency-hw { color: #C9A0DC; }
-.agency-bmp { color: #A8D8A8; }
-
-/* ══════════════ CHARTS PAGE ══════════════ */
-.charts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
-.chart-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 24px;
-  transition: background var(--transition);
-}
-.chart-card h3 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.1rem; margin-bottom: 16px; }
-.chart-wrap { position: relative; height: 220px; }
-
-/* ══════════════ TOAST ══════════════ */
-.toast {
-  position: fixed; bottom: 28px; right: 28px;
-  background: linear-gradient(135deg, #6B3A1F, #3B1F0A);
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  padding: 13px 22px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.95rem; letter-spacing: 0.1em;
-  border-radius: 3px;
-  transform: translateY(80px); opacity: 0;
-  transition: all 0.3s;
-  z-index: 999;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-
-/* ══════════════ MODAL ══════════════ */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7); z-index: 200;
-  align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 32px;
-  max-width: 560px; width: 90%;
-  max-height: 80vh; overflow-y: auto;
-  animation: modalIn 0.25s ease;
-  position: relative;
-}
-@keyframes modalIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
-.modal-close { position:absolute; top:14px; right:14px; background:transparent; border:none; color:var(--text2); cursor:pointer; font-size:1.2rem; transition:color 0.2s; }
-.modal-close:hover { color: var(--gold); }
-.modal h2 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.5rem; margin-bottom: 6px; }
-.modal .modal-brand { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text2); margin-bottom: 16px; }
-.modal .modal-stars { color: var(--gold); font-size: 1.4rem; margin-bottom: 16px; letter-spacing: 3px; }
-.modal-section { margin-top: 18px; }
-.modal-section h4 { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-.modal-notes { font-style: italic; color: var(--text3); line-height: 1.7; font-size: 0.95rem; }
-
-/* FOOTER */
-footer { text-align: center; padding: 36px 20px; border-top: 1px solid var(--border); color: var(--text2); font-size: 0.78rem; letter-spacing: 0.15em; }
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+/* ── TOAST ── */
+.toast{position:fixed;bottom:26px;right:26px;background:linear-gradient(135deg,#6B3A1F,#3B1F0A);border:1px solid var(--gold);color:var(--gold);padding:12px 20px;font-family:'Cormorant Garamond',serif;font-size:.93rem;letter-spacing:.1em;border-radius:3px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+.toast.show{transform:translateY(0);opacity:1;}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);color:var(--text2);font-size:.75rem;letter-spacing:.15em;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-top">
-    <button class="icon-btn" id="themeToggle" title="Cambia tema" onclick="toggleTheme()">🌙</button>
-    <button class="icon-btn" title="Esporta CSV" onclick="exportCSV()">📤</button>
-  </div>
-  <span class="logo-icon">🚬</span>
-  <h1>Il Mio Humidor</h1>
-  <p class="subtitle">Diario Personale dei Sigari</p>
-  <div class="ornament">— ✦ —</div>
-</header>
+<!-- ══════════ AUTH SCREEN ══════════ -->
+<div id="authScreen">
+  <div class="auth-box">
+    <span class="auth-logo">🚬</span>
+    <div class="auth-title">Il Mio Humidor</div>
+    <div class="auth-sub">Diario Privato dei Sigari</div>
 
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat"><span class="stat-num" id="statTotal">0</span><span class="stat-label">Sigari Recensiti</span></div>
-  <div class="stat"><span class="stat-num" id="statBrands">0</span><span class="stat-label">Marche</span></div>
-  <div class="stat"><span class="stat-num" id="statAvg">—</span><span class="stat-label">Voto Medio</span></div>
-  <div class="stat"><span class="stat-num" id="statTop">—</span><span class="stat-label">Top Marca</span></div>
-  <div class="stat"><span class="stat-num" id="statSmoked">—</span><span class="stat-label">Quest'Anno</span></div>
-</div>
-
-<!-- NAV TABS -->
-<nav class="nav-tabs">
-  <button class="nav-tab active" onclick="switchTab('collection',this)">🗂 Collezione</button>
-  <button class="nav-tab" onclick="switchTab('compare',this)">📊 Confronto Agenzie</button>
-  <button class="nav-tab" onclick="switchTab('charts',this)">📈 Statistiche</button>
-  <button class="nav-tab" onclick="switchTab('top',this)">🏆 Top Sigari</button>
-</nav>
-
-<!-- ══════════ PAGE: COLLECTION ══════════ -->
-<div id="page-collection" class="page active">
-  <div class="container two-col">
-
-    <!-- FORM -->
-    <div class="form-panel">
-      <div class="panel-title">✦ Aggiungi Sigaro</div>
-
-      <div class="field-group">
-        <label>Marca / Manifattura</label>
-        <input type="text" id="fBrand" placeholder="es. Cohiba, Padron, Oliva…">
-      </div>
-      <div class="field-group">
-        <label>Nome / Vitola</label>
-        <input type="text" id="fName" placeholder="es. Robusto, Torpedo…">
-      </div>
-      <div class="field-group">
-        <label>Paese d'Origine</label>
-        <select id="fOrigin">
-          <option value="">— Seleziona —</option>
-          <option>Cuba</option><option>Nicaragua</option>
-          <option>Repubblica Dominicana</option><option>Honduras</option>
-          <option>Ecuador</option><option>Brasile</option><option>Messico</option>
-          <option>Jamaica</option><option>Indonesia</option><option>USA</option>
-          <option>Italia</option><option>Camerun</option><option>Altro</option>
-        </select>
-      </div>
-      <div class="field-group">
-        <label>Formato</label>
-        <select id="fFormat">
-          <option value="">— Seleziona —</option>
-          <option>Robusto</option><option>Torpedo / Belicoso</option>
-          <option>Churchill</option><option>Corona</option><option>Toro</option>
-          <option>Lancero / Panetela</option><option>Gordo / Gigante</option>
-          <option>Petit Corona</option><option>Figurado</option><option>Perfecto</option>
-        </select>
-      </div>
-      <div class="field-group">
-        <label>Tipo Wrapper</label>
-        <select id="fWrapper">
-          <option value="">— Seleziona —</option>
-          <option>Colorado Claro</option><option>Colorado</option>
-          <option>Colorado Maduro</option><option>Maduro</option>
-          <option>Natural</option><option>Claro</option><option>Oscuro</option>
-          <option>Candela</option>
-        </select>
-      </div>
-      <div class="field-group">
-        <label>Il Mio Voto (1–100)</label>
-        <input type="number" id="fMyScore" placeholder="es. 90" min="50" max="100">
-      </div>
-      <div class="field-group">
-        <label>Valutazione Stelle</label>
-        <div class="stars-input" id="starsInput">
-          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span>
-          <span data-v="4">★</span><span data-v="5">★</span>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Forza / Corpo — <span id="strengthVal" style="color:var(--gold)">Media</span></label>
-        <input type="range" id="fStrength" min="1" max="5" value="3">
-        <div class="strength-labels"><span>Leggero</span><span>Medio</span><span>Forte</span></div>
-      </div>
-
-      <!-- AGENCY SCORES -->
-      <div class="field-group">
-        <label>Voti Agenzie (opzionale)</label>
-        <div class="agency-grid">
-          <div class="agency-item">
-            <label style="color:#E8C97A">Cigar Aficionado</label>
-            <input type="number" id="aCigarAficionado" placeholder="87" min="50" max="100">
-          </div>
-          <div class="agency-item">
-            <label style="color:#9BC4E2">Cigar Journal</label>
-            <input type="number" id="aCigarJournal" placeholder="88" min="50" max="100">
-          </div>
-          <div class="agency-item">
-            <label style="color:#C9A0DC">Half Wheel</label>
-            <input type="number" id="aHalfWheel" placeholder="90" min="50" max="100">
-          </div>
-          <div class="agency-item">
-            <label style="color:#A8D8A8">Blind Man's Puff</label>
-            <input type="number" id="aBlindMansPuff" placeholder="89" min="50" max="100">
-          </div>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label>Note di Degustazione</label>
-        <textarea id="fNotes" placeholder="Aromi, sapori, retrogusto, costruzione, tiraggio…"></textarea>
-      </div>
-      <div class="field-group">
-        <label>Data Fumata</label>
-        <input type="date" id="fDate">
-      </div>
-      <div class="field-group">
-        <label>Prezzo (€)</label>
-        <input type="number" id="fPrice" placeholder="es. 15" min="0" step="0.5">
-      </div>
-      <div class="field-group">
-        <label>Luogo / Occasione</label>
-        <input type="text" id="fPlace" placeholder="es. Terrazza di casa, Compleanno…">
-      </div>
-
-      <button class="btn-add" onclick="addCigar()">✦ Aggiungi alla Collezione</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Accedi</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Registrati</button>
     </div>
 
-    <!-- COLLECTION PANEL -->
-    <div>
-      <div class="collection-header">
-        <div class="panel-title-main">La Collezione</div>
-        <div class="filter-row" id="filterRow">
-          <button class="filter-btn active" onclick="setFilter('all',this)">Tutti</button>
-        </div>
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="la-tua@email.com" autocomplete="email">
       </div>
-
-      <div class="search-export">
-        <div class="search-wrap">
-          <input type="text" id="searchInput" placeholder="Cerca per nome, marca, note, paese…" oninput="renderCards()">
-        </div>
-        <button class="btn-export" onclick="exportCSV()">📤 CSV</button>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
       </div>
-
-      <div class="sort-row">
-        <select id="sortSelect" onchange="renderCards()">
-          <option value="date_desc">Più recenti</option>
-          <option value="date_asc">Meno recenti</option>
-          <option value="score_desc">Punteggio ↓</option>
-          <option value="score_asc">Punteggio ↑</option>
-          <option value="brand_asc">Marca A→Z</option>
-          <option value="price_desc">Prezzo ↓</option>
-        </select>
-        <select id="filterStrength" onchange="renderCards()">
-          <option value="">Qualsiasi forza</option>
-          <option value="1">Leggero</option>
-          <option value="2">Medio-Leggero</option>
-          <option value="3">Medio</option>
-          <option value="4">Medio-Forte</option>
-          <option value="5">Forte</option>
-        </select>
-        <select id="filterStars" onchange="renderCards()">
-          <option value="">Qualsiasi voto ★</option>
-          <option value="5">★★★★★ (5 stelle)</option>
-          <option value="4">★★★★ (4+ stelle)</option>
-          <option value="3">★★★ (3+ stelle)</option>
-        </select>
-      </div>
-
-      <div class="cards-grid" id="cardsGrid"></div>
+      <button class="btn-auth" onclick="doLogin()">✦ Entra nel Humidor</button>
+      <div class="auth-error" id="loginError"></div>
     </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm" style="display:none">
+      <div class="auth-hint">🔒 Solo il tuo <strong>codice anonimo</strong> sarà visibile al proprietario. Il tuo nome è privato.</div>
+      <div class="auth-field">
+        <label>Username (visibile solo a te)</label>
+        <input type="text" id="regUsername" placeholder="es. GranMaestroDelFumo" autocomplete="username">
+      </div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="la-tua@email.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Password (min. 6 caratteri)</label>
+        <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <button class="btn-auth" onclick="doRegister()">✦ Crea il Mio Humidor</button>
+      <div class="auth-error" id="registerError"></div>
+    </div>
+
+    <div class="auth-ornament">— ✦ —</div>
+    <div style="font-size:.72rem;color:var(--text2);opacity:.6">I tuoi dati sono privati e cifrati</div>
   </div>
 </div>
 
-<!-- ══════════ PAGE: COMPARE ══════════ -->
-<div id="page-compare" class="page">
-  <div class="container">
-    <div class="comp-section">
-      <div class="section-title">📊 Confronto con le Agenzie</div>
-      <div class="section-desc">Il tuo voto (scala 50–100) confrontato con Cigar Aficionado, Cigar Journal, Half Wheel e Blind Man's Puff. Il segno + indica che sei stato più generoso dell'agenzia.</div>
-      <div class="comp-table-wrap">
-        <table class="comp-table" id="compTable">
-          <thead>
-            <tr>
-              <th onclick="sortCompTable('brand')">Marca <span class="sort-arrow">↕</span></th>
-              <th onclick="sortCompTable('name')">Nome <span class="sort-arrow">↕</span></th>
-              <th onclick="sortCompTable('myScore')" class="sorted">Il Mio <span class="sort-arrow">↓</span></th>
-              <th><span class="agency-ca">Cigar Aficionado</span></th>
-              <th><span class="agency-cj">Cigar Journal</span></th>
-              <th><span class="agency-hw">Half Wheel</span></th>
-              <th><span class="agency-bmp">Blind Man's Puff</span></th>
-              <th onclick="sortCompTable('avgAgency')">Media Agenzie <span class="sort-arrow">↕</span></th>
-              <th onclick="sortCompTable('delta')">Diff. Media <span class="sort-arrow">↕</span></th>
-            </tr>
-          </thead>
-          <tbody id="compTableBody"></tbody>
+<!-- ══════════ APP ══════════ -->
+<div id="appScreen">
+  <header>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="Tema">🌙</button>
+      <button class="icon-btn" onclick="exportCSV()" title="Esporta CSV">📤</button>
+      <button class="icon-btn" onclick="doLogout()" title="Esci">🚪</button>
+    </div>
+    <span class="logo-icon">🚬</span>
+    <h1>Il Mio Humidor</h1>
+    <div class="greeting" id="greetingEl"></div>
+    <div class="ornament">— ✦ —</div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num" id="statTotal">0</span><span class="stat-label">Sigari</span></div>
+    <div class="stat"><span class="stat-num" id="statBrands">0</span><span class="stat-label">Marche</span></div>
+    <div class="stat"><span class="stat-num" id="statAvg">—</span><span class="stat-label">Voto Medio</span></div>
+    <div class="stat"><span class="stat-num" id="statTop">—</span><span class="stat-label">Top Marca</span></div>
+    <div class="stat"><span class="stat-num" id="statYear">—</span><span class="stat-label">Quest'Anno</span></div>
+  </div>
+
+  <nav class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="switchTab('collection',this)">🗂 Collezione</button>
+    <button class="nav-tab" onclick="switchTab('compare',this)">📊 Confronto</button>
+    <button class="nav-tab" onclick="switchTab('charts',this)">📈 Statistiche</button>
+    <button class="nav-tab" onclick="switchTab('top',this)">🏆 Top</button>
+    <button class="nav-tab admin-tab" id="adminTab" onclick="switchTab('admin',this)" style="display:none">👑 Admin</button>
+  </nav>
+
+  <!-- PAGE: COLLECTION -->
+  <div id="page-collection" class="page active">
+    <div class="container two-col">
+      <div class="form-panel">
+        <div class="panel-title">✦ Aggiungi Sigaro</div>
+        <div class="field-group"><label>Marca</label><input type="text" id="fBrand" placeholder="es. Cohiba, Padron…"></div>
+        <div class="field-group"><label>Nome / Vitola</label><input type="text" id="fName" placeholder="es. Robusto, Churchill…"></div>
+        <div class="field-group">
+          <label>Paese d'Origine</label>
+          <select id="fOrigin">
+            <option value="">— Seleziona —</option>
+            <option>Cuba</option><option>Nicaragua</option><option>Repubblica Dominicana</option>
+            <option>Honduras</option><option>Ecuador</option><option>Brasile</option>
+            <option>Messico</option><option>Jamaica</option><option>Indonesia</option>
+            <option>USA</option><option>Italia</option><option>Camerun</option><option>Altro</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Formato</label>
+          <select id="fFormat">
+            <option value="">— Seleziona —</option>
+            <option>Robusto</option><option>Torpedo / Belicoso</option><option>Churchill</option>
+            <option>Corona</option><option>Toro</option><option>Lancero / Panetela</option>
+            <option>Gordo / Gigante</option><option>Petit Corona</option><option>Figurado</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Wrapper</label>
+          <select id="fWrapper">
+            <option value="">— Seleziona —</option>
+            <option>Colorado Claro</option><option>Colorado</option><option>Colorado Maduro</option>
+            <option>Maduro</option><option>Natural</option><option>Claro</option><option>Oscuro</option>
+          </select>
+        </div>
+        <div class="field-group"><label>Il Mio Voto (50–100)</label><input type="number" id="fMyScore" placeholder="es. 90" min="50" max="100"></div>
+        <div class="field-group">
+          <label>Stelle</label>
+          <div class="stars-input" id="starsInput">
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Forza — <span id="strengthVal" style="color:var(--gold)">Media</span></label>
+          <input type="range" id="fStrength" min="1" max="5" value="3">
+          <div class="strength-labels"><span>Leggero</span><span>Medio</span><span>Forte</span></div>
+        </div>
+        <div class="field-group">
+          <label>Voti Agenzie (opz.)</label>
+          <div class="agency-grid">
+            <div class="agency-item"><label style="color:#E8C97A">Cigar Aficionado</label><input type="number" id="aCA" placeholder="87" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#9BC4E2">Cigar Journal</label><input type="number" id="aCJ" placeholder="88" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#C9A0DC">Half Wheel</label><input type="number" id="aHW" placeholder="90" min="50" max="100"></div>
+            <div class="agency-item"><label style="color:#A8D8A8">Blind Man's Puff</label><input type="number" id="aBMP" placeholder="89" min="50" max="100"></div>
+          </div>
+        </div>
+        <div class="field-group"><label>Note di Degustazione</label><textarea id="fNotes" placeholder="Aromi, sapori, retrogusto, costruzione…"></textarea></div>
+        <div class="field-group"><label>Data Fumata</label><input type="date" id="fDate"></div>
+        <div class="field-group"><label>Prezzo (€)</label><input type="number" id="fPrice" placeholder="es. 15" min="0" step="0.5"></div>
+        <div class="field-group"><label>Luogo / Occasione</label><input type="text" id="fPlace" placeholder="es. Terrazza, Compleanno…"></div>
+        <button class="btn-add" onclick="addCigar()">✦ Aggiungi alla Collezione</button>
+      </div>
+
+      <div>
+        <div class="collection-header">
+          <div class="panel-title-main">La Mia Collezione</div>
+          <div class="filter-row" id="filterRow"><button class="filter-btn active" onclick="setFilter('all',this)">Tutti</button></div>
+        </div>
+        <div class="search-export">
+          <div class="search-wrap"><input type="text" id="searchInput" placeholder="Cerca marca, nome, note…" oninput="renderCards()"></div>
+          <button class="btn-export" onclick="exportCSV()">📤 CSV</button>
+        </div>
+        <div class="sort-row">
+          <select id="sortSelect" onchange="renderCards()">
+            <option value="date_desc">Più recenti</option><option value="date_asc">Meno recenti</option>
+            <option value="score_desc">Punteggio ↓</option><option value="score_asc">Punteggio ↑</option>
+            <option value="brand_asc">Marca A→Z</option><option value="price_desc">Prezzo ↓</option>
+          </select>
+          <select id="filterStrength" onchange="renderCards()">
+            <option value="">Qualsiasi forza</option><option value="1">Leggero</option>
+            <option value="2">Medio-Leggero</option><option value="3">Medio</option>
+            <option value="4">Medio-Forte</option><option value="5">Forte</option>
+          </select>
+          <select id="filterStars" onchange="renderCards()">
+            <option value="">Qualsiasi ★</option><option value="5">★★★★★</option>
+            <option value="4">★★★★+</option><option value="3">★★★+</option>
+          </select>
+        </div>
+        <div class="cards-grid" id="cardsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: COMPARE -->
+  <div id="page-compare" class="page">
+    <div class="container">
+      <div class="comp-section">
+        <div class="section-title">📊 Confronto con le Agenzie</div>
+        <div class="section-desc">Il tuo voto confrontato con Cigar Aficionado, Cigar Journal, Half Wheel e Blind Man's Puff.</div>
+        <div class="comp-table-wrap">
+          <table class="comp-table">
+            <thead><tr>
+              <th>Marca</th><th>Nome</th>
+              <th>Il Mio</th>
+              <th style="color:#E8C97A">C. Aficionado</th>
+              <th style="color:#9BC4E2">C. Journal</th>
+              <th style="color:#C9A0DC">Half Wheel</th>
+              <th style="color:#A8D8A8">BMP</th>
+              <th>Media Ag.</th><th>Diff.</th>
+            </tr></thead>
+            <tbody id="compTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: CHARTS -->
+  <div id="page-charts" class="page">
+    <div class="container">
+      <div class="charts-grid">
+        <div class="chart-card"><h3>Distribuzione Voti ★</h3><div class="chart-wrap"><canvas id="chartRating"></canvas></div></div>
+        <div class="chart-card"><h3>Sigari per Paese</h3><div class="chart-wrap"><canvas id="chartOrigin"></canvas></div></div>
+        <div class="chart-card"><h3>Media per Marca</h3><div class="chart-wrap"><canvas id="chartBrand"></canvas></div></div>
+        <div class="chart-card"><h3>Distribuzione Forza</h3><div class="chart-wrap"><canvas id="chartStrength"></canvas></div></div>
+        <div class="chart-card" style="grid-column:1/-1"><h3>Il Mio Voto vs Media Agenzie</h3><div class="chart-wrap" style="height:240px"><canvas id="chartCompare"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: TOP -->
+  <div id="page-top" class="page">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:14px"><div class="section-title" style="display:inline-block">🏆 Hall of Fame</div></div>
+      <div class="podium" id="podium"></div>
+      <div class="comp-table-wrap" style="margin-top:26px">
+        <table class="comp-table"><thead><tr><th>#</th><th>Marca</th><th>Nome</th><th>Stelle</th><th>Punteggio</th><th>Origine</th><th>Data</th></tr></thead>
+        <tbody id="topTableBody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: ADMIN -->
+  <div id="page-admin" class="page">
+    <div class="container">
+      <div class="admin-banner">
+        <span class="admin-icon">👑</span>
+        <div><h3>Pannello Proprietario</h3><p>Visione anonima degli utenti registrati. I nomi sono privati.</p></div>
+      </div>
+      <div class="admin-stats" id="adminStats"></div>
+      <div class="section-title" style="margin-bottom:12px">Utenti Registrati</div>
+      <div class="user-table-wrap">
+        <table class="user-table">
+          <thead><tr><th>Codice Anonimo</th><th>Data Registrazione</th><th>Sigari</th><th>Stato</th></tr></thead>
+          <tbody id="adminTableBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text2)"><span class="spinner"></span>Caricamento…</td></tr></tbody>
         </table>
       </div>
+      <div class="privacy-note">🔒 <strong>Privacy:</strong> Vedi solo i codici anonimi generati al momento della registrazione. Username, email e dati personali non sono accessibili da questa vista.</div>
     </div>
   </div>
 </div>
 
-<!-- ══════════ PAGE: CHARTS ══════════ -->
-<div id="page-charts" class="page">
-  <div class="container">
-    <div class="charts-grid">
-      <div class="chart-card">
-        <h3>Distribuzione Voti (stelle)</h3>
-        <div class="chart-wrap"><canvas id="chartRating"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h3>Sigari per Paese</h3>
-        <div class="chart-wrap"><canvas id="chartOrigin"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h3>Media Voti per Marca</h3>
-        <div class="chart-wrap"><canvas id="chartBrand"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h3>Distribuzione Forza</h3>
-        <div class="chart-wrap"><canvas id="chartStrength"></canvas></div>
-      </div>
-      <div class="chart-card" style="grid-column: 1 / -1">
-        <h3>Il Mio Voto vs Media Agenzie (per sigaro)</h3>
-        <div class="chart-wrap" style="height:260px"><canvas id="chartCompare"></canvas></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════ PAGE: TOP ══════════ -->
-<div id="page-top" class="page">
-  <div class="container">
-    <div style="text-align:center; margin-bottom: 16px;">
-      <div class="section-title" style="display:inline-block">🏆 Hall of Fame</div>
-      <p class="section-desc" style="margin-top:6px">I migliori sigari della tua collezione, ordinati per punteggio.</p>
-    </div>
-    <div class="podium" id="podium"></div>
-    <div class="comp-table-wrap" style="margin-top:30px">
-      <table class="comp-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Marca</th>
-            <th>Nome</th>
-            <th>Stelle</th>
-            <th>Punteggio</th>
-            <th>Origine</th>
-            <th>Data</th>
-          </tr>
-        </thead>
-        <tbody id="topTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DETAIL -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
-    <div id="modalContent"></div>
-  </div>
+  <div class="modal"><button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button><div id="modalContent"></div></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<footer>
-  <div class="ornament" style="margin-bottom:8px">— ✦ —</div>
-  Il Mio Humidor · Diario Personale dei Sigari<br>
-  <small style="opacity:0.4">Dati salvati localmente nel browser · Versione 2.0</small>
-</footer>
+<footer><div class="ornament" style="margin-bottom:6px">— ✦ —</div>Il Mio Humidor · Diario Privato dei Sigari<br><small style="opacity:.4">Powered by Firebase · v3.0</small></footer>
 
-<script>
-// ═══════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════
-let cigars = JSON.parse(localStorage.getItem('humidor_cigars_v2') || '[]');
+<!-- ══════════ FIREBASE ══════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDXwyT_7ITJ9QytmN6XSHZdR0At55VzfA0",
+  authDomain: "il-mio-humidor.firebaseapp.com",
+  projectId: "il-mio-humidor",
+  storageBucket: "il-mio-humidor.firebasestorage.app",
+  messagingSenderId: "759616608424",
+  appId: "1:759616608424:web:ca8a17bcc1622083680a9d"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── OWNER UID (imposta il tuo dopo il primo login) ──
+// Dopo la prima registrazione, apri la console del browser (F12),
+// vai su Application > Console e cerca "MY UID:" — copia e incolla qui:
+const OWNER_UID = "INSERISCI_QUI_IL_TUO_UID";
+
+// ── STATE ──
+let currentUser = null;
+let currentProfile = null;
+let cigars = [];
 let selectedRating = 0;
 let activeFilter = 'all';
-let compSortCol = 'myScore';
-let compSortDir = -1;
 let charts = {};
 
 const STRENGTH_LABELS = ['','Leggero','Medio-Leggero','Medio','Medio-Forte','Forte'];
-const AGENCIES = [
-  { key: 'cigarAficionado', label: 'Cigar Aficionado', cls: 'agency-ca' },
-  { key: 'cigarJournal',    label: 'Cigar Journal',    cls: 'agency-cj' },
-  { key: 'halfWheel',       label: 'Half Wheel',       cls: 'agency-hw' },
-  { key: 'blindMansPuff',   label: "Blind Man's Puff", cls: 'agency-bmp' },
+const GREETINGS = [
+  n => `Ciao <strong>${n}</strong>, il fumo si alza e il tempo rallenta 🌿`,
+  n => `Bentornato, <strong>${n}</strong> — quale capolavoro accendi oggi? 🔥`,
+  n => `<strong>${n}</strong>, il tuo humidor ti aspettava 🚬`,
+  n => `Ciao <strong>${n}</strong>, ogni boccata è una storia da scrivere ✦`,
+  n => `Bentornato <strong>${n}</strong> — che il fumo sia lento e il gusto profondo 🌑`,
+  n => `Ciao <strong>${n}</strong>, il tempo di un sigaro è tempo ben speso 🕰️`,
 ];
 
-// ═══════════════════════════════════════════
-//  THEME
-// ═══════════════════════════════════════════
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('humidor_theme', isDark ? 'light' : 'dark');
-  setTimeout(() => renderCharts(), 100);
+// ── UTILS ──
+window.showToast = function(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600);
 }
-(function initTheme() {
-  const t = localStorage.getItem('humidor_theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', t);
-  document.getElementById('themeToggle').textContent = t === 'dark' ? '🌙' : '☀️';
-})();
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d){ if(!d)return''; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
+function genAnonCode(uid){ return 'HUM-'+uid.substring(0,8).toUpperCase(); }
 
-// ═══════════════════════════════════════════
-//  TAB NAVIGATION
-// ═══════════════════════════════════════════
-function switchTab(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
-  if (id === 'compare') renderCompTable();
-  if (id === 'charts') renderCharts();
-  if (id === 'top') renderTop();
+// ── THEME ──
+window.toggleTheme = function(){
+  const html=document.documentElement; const dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeToggle').textContent=dark?'☀️':'🌙';
+  localStorage.setItem('humidor_theme',dark?'light':'dark');
+  setTimeout(()=>renderCharts(),100);
+}
+const t=localStorage.getItem('humidor_theme')||'dark';
+document.documentElement.setAttribute('data-theme',t);
+document.getElementById('themeToggle').textContent=t==='dark'?'🌙':'☀️';
+
+// ── AUTH UI ──
+window.switchAuthTab = function(tab){
+  document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
 }
 
-// ═══════════════════════════════════════════
-//  STARS INPUT
-// ═══════════════════════════════════════════
-document.getElementById('fDate').valueAsDate = new Date();
-const stars = document.querySelectorAll('#starsInput span');
-stars.forEach(s => {
-  s.addEventListener('mouseover', () => hlStars(+s.dataset.v));
-  s.addEventListener('mouseout',  () => hlStars(selectedRating));
-  s.addEventListener('click', () => { selectedRating = +s.dataset.v; hlStars(selectedRating); });
-});
-function hlStars(n) { stars.forEach(s => s.classList.toggle('active', +s.dataset.v <= n)); }
-
-// Strength slider
-const slider = document.getElementById('fStrength');
-slider.addEventListener('input', () => {
-  slider.style.setProperty('--pct', (slider.value-1)/4*100+'%');
-  document.getElementById('strengthVal').textContent = STRENGTH_LABELS[slider.value];
-});
-slider.dispatchEvent(new Event('input'));
-
-// ═══════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
+window.doLogin = async function(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPassword').value;
+  document.getElementById('loginError').textContent='';
+  try {
+    await signInWithEmailAndPassword(auth,email,pass);
+  } catch(e){
+    document.getElementById('loginError').textContent = translateError(e.code);
+  }
 }
 
-// ═══════════════════════════════════════════
-//  SAVE / ADD / DELETE
-// ═══════════════════════════════════════════
-function save() { localStorage.setItem('humidor_cigars_v2', JSON.stringify(cigars)); }
+window.doRegister = async function(){
+  const username=document.getElementById('regUsername').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const pass=document.getElementById('regPassword').value;
+  document.getElementById('registerError').textContent='';
+  if(!username){ document.getElementById('registerError').textContent='Inserisci un username'; return; }
+  try {
+    const cred = await createUserWithEmailAndPassword(auth,email,pass);
+    const uid = cred.user.uid;
+    const anonCode = genAnonCode(uid);
+    await setDoc(doc(db,'users',uid),{
+      username, anonCode,
+      joinedAt: serverTimestamp(),
+      cigarsCount: 0,
+    });
+    // Admin sees only anonymous registration entries
+    await setDoc(doc(db,'registrations',uid),{
+      anonCode,
+      joinedAt: serverTimestamp(),
+    });
+  } catch(e){
+    document.getElementById('registerError').textContent = translateError(e.code);
+  }
+}
 
-function addCigar() {
-  const brand = document.getElementById('fBrand').value.trim();
-  const name  = document.getElementById('fName').value.trim();
-  if (!brand || !name) { showToast('⚠ Inserisci marca e nome'); return; }
-  if (!selectedRating)  { showToast('⚠ Seleziona una valutazione ★'); return; }
+window.doLogout = async function(){
+  await signOut(auth);
+}
 
-  const cigar = {
-    id: Date.now(),
-    brand, name,
-    origin:   document.getElementById('fOrigin').value,
-    format:   document.getElementById('fFormat').value,
-    wrapper:  document.getElementById('fWrapper').value,
-    rating:   selectedRating,
-    strength: +slider.value,
-    myScore:  document.getElementById('fMyScore').value ? +document.getElementById('fMyScore').value : null,
-    agencies: {
-      cigarAficionado: document.getElementById('aCigarAficionado').value ? +document.getElementById('aCigarAficionado').value : null,
-      cigarJournal:    document.getElementById('aCigarJournal').value    ? +document.getElementById('aCigarJournal').value    : null,
-      halfWheel:       document.getElementById('aHalfWheel').value       ? +document.getElementById('aHalfWheel').value       : null,
-      blindMansPuff:   document.getElementById('aBlindMansPuff').value   ? +document.getElementById('aBlindMansPuff').value   : null,
-    },
-    notes:  document.getElementById('fNotes').value.trim(),
-    date:   document.getElementById('fDate').value,
-    price:  document.getElementById('fPrice').value,
-    place:  document.getElementById('fPlace').value.trim(),
+function translateError(code){
+  const map = {
+    'auth/invalid-email':'Email non valida',
+    'auth/user-not-found':'Utente non trovato',
+    'auth/wrong-password':'Password errata',
+    'auth/invalid-credential':'Email o password errati',
+    'auth/email-already-in-use':'Email già registrata',
+    'auth/weak-password':'Password troppo corta (min. 6 caratteri)',
+    'auth/too-many-requests':'Troppi tentativi, riprova più tardi',
   };
+  return map[code] || 'Errore: '+code;
+}
 
+// ── AUTH STATE ──
+onAuthStateChanged(auth, async (user) => {
+  if(user){
+    currentUser = user;
+    console.log('MY UID:', user.uid); // Copy this for OWNER_UID
+    document.getElementById('authScreen').style.display='none';
+    document.getElementById('appScreen').style.display='block';
+
+    // Load profile
+    const profileSnap = await getDoc(doc(db,'users',user.uid));
+    if(profileSnap.exists()){
+      currentProfile = profileSnap.data();
+    } else {
+      currentProfile = { username: user.email.split('@')[0], anonCode: genAnonCode(user.uid) };
+    }
+
+    // Greeting
+    const g = GREETINGS[Math.floor(Math.random()*GREETINGS.length)];
+    document.getElementById('greetingEl').innerHTML = g(currentProfile.username);
+
+    // Show admin tab if owner
+    if(user.uid === OWNER_UID){
+      document.getElementById('adminTab').style.display='inline-block';
+    }
+
+    // Init form
+    document.getElementById('fDate').valueAsDate = new Date();
+    initStars(); initSlider();
+
+    // Load cigars
+    await loadCigars();
+  } else {
+    currentUser=null; currentProfile=null; cigars=[];
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('appScreen').style.display='none';
+  }
+});
+
+// ── CIGARS FIRESTORE ──
+async function loadCigars(){
+  if(!currentUser) return;
+  const q = query(collection(db,'cigars'), where('uid','==',currentUser.uid), orderBy('createdAt','desc'));
+  const snap = await getDocs(q);
+  cigars = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderCards(); updateStats(); updateFilters();
+}
+
+window.addCigar = async function(){
+  const brand=document.getElementById('fBrand').value.trim();
+  const name=document.getElementById('fName').value.trim();
+  if(!brand||!name){ showToast('⚠ Inserisci marca e nome'); return; }
+  if(!selectedRating){ showToast('⚠ Seleziona una valutazione ★'); return; }
+  const slider=document.getElementById('fStrength');
+  const cigar = {
+    uid: currentUser.uid,
+    brand, name,
+    origin: document.getElementById('fOrigin').value,
+    format: document.getElementById('fFormat').value,
+    wrapper: document.getElementById('fWrapper').value,
+    rating: selectedRating,
+    strength: +slider.value,
+    myScore: document.getElementById('fMyScore').value ? +document.getElementById('fMyScore').value : null,
+    agencies: {
+      ca:  document.getElementById('aCA').value  ? +document.getElementById('aCA').value  : null,
+      cj:  document.getElementById('aCJ').value  ? +document.getElementById('aCJ').value  : null,
+      hw:  document.getElementById('aHW').value  ? +document.getElementById('aHW').value  : null,
+      bmp: document.getElementById('aBMP').value ? +document.getElementById('aBMP').value : null,
+    },
+    notes: document.getElementById('fNotes').value.trim(),
+    date: document.getElementById('fDate').value,
+    price: document.getElementById('fPrice').value,
+    place: document.getElementById('fPlace').value.trim(),
+    createdAt: serverTimestamp(),
+  };
+  const docRef = await addDoc(collection(db,'cigars'), cigar);
+  cigar.id = docRef.id;
   cigars.unshift(cigar);
-  save();
-  resetForm();
-  renderCards();
-  updateStats();
-  updateFilters();
+  resetForm(); renderCards(); updateStats(); updateFilters();
   showToast('✦ Sigaro aggiunto!');
 }
 
-function resetForm() {
-  ['fBrand','fName','fNotes','fPrice','fPlace','fMyScore',
-   'aCigarAficionado','aCigarJournal','aHalfWheel','aBlindMansPuff']
-    .forEach(id => { document.getElementById(id).value = ''; });
-  ['fOrigin','fFormat','fWrapper'].forEach(id => { document.getElementById(id).value = ''; });
-  selectedRating = 0; hlStars(0);
-  slider.value = 3; slider.dispatchEvent(new Event('input'));
-  document.getElementById('fDate').valueAsDate = new Date();
-}
-
-function deleteCigar(id) {
+window.deleteCigar = async function(id){
+  await deleteDoc(doc(db,'cigars',id));
   cigars = cigars.filter(c => c.id !== id);
-  save(); renderCards(); updateStats(); updateFilters();
+  renderCards(); updateStats(); updateFilters();
   showToast('Sigaro rimosso');
 }
 
-// ═══════════════════════════════════════════
-//  FILTERS / SORT
-// ═══════════════════════════════════════════
-function setFilter(val, btn) {
-  activeFilter = val;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+// ── STARS & SLIDER ──
+function initStars(){
+  selectedRating=0;
+  const stars=document.querySelectorAll('#starsInput span');
+  stars.forEach(s=>{
+    s.addEventListener('mouseover',()=>hlStars(+s.dataset.v,stars));
+    s.addEventListener('mouseout',()=>hlStars(selectedRating,stars));
+    s.addEventListener('click',()=>{ selectedRating=+s.dataset.v; hlStars(selectedRating,stars); });
+  });
+}
+function hlStars(n,stars){ (stars||document.querySelectorAll('#starsInput span')).forEach(s=>s.classList.toggle('active',+s.dataset.v<=n)); }
+
+function initSlider(){
+  const slider=document.getElementById('fStrength');
+  slider.addEventListener('input',()=>{
+    slider.style.setProperty('--pct',(slider.value-1)/4*100+'%');
+    document.getElementById('strengthVal').textContent=STRENGTH_LABELS[slider.value];
+  });
+  slider.dispatchEvent(new Event('input'));
+}
+
+function resetForm(){
+  ['fBrand','fName','fNotes','fPrice','fPlace','fMyScore','aCA','aCJ','aHW','aBMP']
+    .forEach(id=>document.getElementById(id).value='');
+  ['fOrigin','fFormat','fWrapper'].forEach(id=>document.getElementById(id).value='');
+  selectedRating=0; hlStars(0);
+  document.getElementById('fStrength').value=3;
+  document.getElementById('fStrength').dispatchEvent(new Event('input'));
+  document.getElementById('fDate').valueAsDate=new Date();
+}
+
+// ── FILTERS / SORT ──
+window.setFilter = function(val,btn){
+  activeFilter=val;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderCards();
 }
 
-function updateFilters() {
-  const brands = [...new Set(cigars.map(c => c.brand))];
-  const row = document.getElementById('filterRow');
-  row.innerHTML = `<button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="setFilter('all',this)">Tutti</button>`;
-  brands.forEach(b => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn' + (activeFilter === b ? ' active' : '');
-    btn.textContent = b;
-    btn.onclick = function() { setFilter(b, this); };
-    row.appendChild(btn);
+function updateFilters(){
+  const brands=[...new Set(cigars.map(c=>c.brand))];
+  const row=document.getElementById('filterRow');
+  row.innerHTML=`<button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="setFilter('all',this)">Tutti</button>`;
+  brands.forEach(b=>{
+    const btn=document.createElement('button');
+    btn.className='filter-btn'+(activeFilter===b?' active':'');
+    btn.textContent=b; btn.onclick=function(){setFilter(b,this);}; row.appendChild(btn);
   });
 }
 
-function getFiltered() {
-  const q  = document.getElementById('searchInput').value.toLowerCase();
-  const fs = document.getElementById('filterStrength').value;
-  const fv = document.getElementById('filterStars').value;
-  const so = document.getElementById('sortSelect').value;
-
-  let list = cigars.filter(c => {
-    if (activeFilter !== 'all' && c.brand !== activeFilter) return false;
-    if (q && !(c.brand+c.name+c.notes+c.origin+c.format+c.place).toLowerCase().includes(q)) return false;
-    if (fs && c.strength !== +fs) return false;
-    if (fv && c.rating < +fv) return false;
+function getFiltered(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const fs=document.getElementById('filterStrength').value;
+  const fv=document.getElementById('filterStars').value;
+  const so=document.getElementById('sortSelect').value;
+  let list=cigars.filter(c=>{
+    if(activeFilter!=='all'&&c.brand!==activeFilter)return false;
+    if(q&&!(c.brand+c.name+(c.notes||'')+(c.origin||'')+(c.format||'')+(c.place||'')).toLowerCase().includes(q))return false;
+    if(fs&&c.strength!==+fs)return false;
+    if(fv&&c.rating<+fv)return false;
     return true;
   });
-
-  const sortFns = {
-    date_desc:  (a,b) => (b.date||'').localeCompare(a.date||''),
-    date_asc:   (a,b) => (a.date||'').localeCompare(b.date||''),
-    score_desc: (a,b) => (b.myScore||b.rating*20) - (a.myScore||a.rating*20),
-    score_asc:  (a,b) => (a.myScore||a.rating*20) - (b.myScore||b.rating*20),
-    brand_asc:  (a,b) => a.brand.localeCompare(b.brand),
-    price_desc: (a,b) => (+b.price||0) - (+a.price||0),
+  const sf={
+    date_desc:(a,b)=>(b.date||'').localeCompare(a.date||''),
+    date_asc:(a,b)=>(a.date||'').localeCompare(b.date||''),
+    score_desc:(a,b)=>(b.myScore||b.rating*20)-(a.myScore||a.rating*20),
+    score_asc:(a,b)=>(a.myScore||a.rating*20)-(b.myScore||b.rating*20),
+    brand_asc:(a,b)=>a.brand.localeCompare(b.brand),
+    price_desc:(a,b)=>(+b.price||0)-(+a.price||0),
   };
-  list.sort(sortFns[so] || sortFns.date_desc);
+  list.sort(sf[so]||sf.date_desc);
   return list;
 }
 
-// ═══════════════════════════════════════════
-//  RENDER CARDS
-// ═══════════════════════════════════════════
-function renderCards() {
-  const list = getFiltered();
-  const grid = document.getElementById('cardsGrid');
-  if (!list.length) {
-    grid.innerHTML = `<div class="empty-state">
-      <span class="big-icon">🚬</span>
-      <h3>${cigars.length ? 'Nessun risultato' : "L'humidor è vuoto"}</h3>
-      <p>${cigars.length ? 'Cambia filtri o cerca diversamente' : 'Aggiungi il tuo primo sigaro!'}</p>
-    </div>`; return;
+// ── RENDER CARDS ──
+function renderCards(){
+  const list=getFiltered();
+  const grid=document.getElementById('cardsGrid');
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state"><span class="big-icon">🚬</span><h3>${cigars.length?'Nessun risultato':"L'humidor è vuoto"}</h3><p>${cigars.length?'Cambia filtri':'Aggiungi il tuo primo sigaro!'}</p></div>`;
+    return;
   }
-
-  grid.innerHTML = list.map(c => {
-    const agBadges = AGENCIES.filter(a => c.agencies?.[a.key])
-      .map(a => `<span class="agency-badge ${a.cls.replace('agency-','')}">${a.label.split(' ')[0].split("'")[0]}: ${c.agencies[a.key]}</span>`).join('');
-    const scoreLabel = c.myScore ? `<span class="tag price">${c.myScore}/100</span>` : '';
-    return `
-    <div class="card" onclick="openModal(${c.id})">
-      <button class="card-delete" onclick="event.stopPropagation();deleteCigar(${c.id})" title="Rimuovi">✕</button>
+  const agMap={ca:'ca',cj:'cj',hw:'hw',bmp:'bmp'};
+  const agLabel={ca:'CA',cj:'CJ',hw:'HW',bmp:'BMP'};
+  grid.innerHTML=list.map(c=>{
+    const agBadges=Object.entries(c.agencies||{}).filter(([,v])=>v).map(([k,v])=>`<span class="ab ${agMap[k]}">${agLabel[k]}: ${v}</span>`).join('');
+    return `<div class="card" onclick="openModal('${c.id}')">
+      <button class="card-delete" onclick="event.stopPropagation();deleteCigar('${c.id}')" title="Rimuovi">✕</button>
       <div class="card-brand">${escHtml(c.brand)}</div>
       <div class="card-name">${escHtml(c.name)}</div>
       <div class="card-stars">${'★'.repeat(c.rating)}${'☆'.repeat(5-c.rating)}</div>
       <div class="card-tags">
-        ${c.origin ? `<span class="tag origin">${escHtml(c.origin)}</span>` : ''}
-        ${c.format ? `<span class="tag format">${escHtml(c.format)}</span>` : ''}
-        ${c.price  ? `<span class="tag">€ ${escHtml(c.price)}</span>` : ''}
-        ${scoreLabel}
+        ${c.origin?`<span class="tag origin">${escHtml(c.origin)}</span>`:''}
+        ${c.format?`<span class="tag format">${escHtml(c.format)}</span>`:''}
+        ${c.price?`<span class="tag">€ ${escHtml(c.price)}</span>`:''}
+        ${c.myScore?`<span class="tag price">${c.myScore}/100</span>`:''}
       </div>
-      ${agBadges ? `<div class="card-agencies">${agBadges}</div>` : ''}
-      ${c.notes ? `<div class="card-notes">${escHtml(c.notes)}</div>` : ''}
+      ${agBadges?`<div class="card-agency-badges">${agBadges}</div>`:''}
+      ${c.notes?`<div class="card-notes">${escHtml(c.notes)}</div>`:''}
       <div class="card-strength">
         <span>${STRENGTH_LABELS[c.strength]}</span>
         <div class="strength-bar"><div class="strength-fill" style="width:${(c.strength-1)/4*100}%"></div></div>
       </div>
-      ${c.date ? `<div class="card-date">📅 ${formatDate(c.date)}${c.place ? ' · ' + escHtml(c.place) : ''}</div>` : ''}
+      ${c.date?`<div class="card-date">📅 ${formatDate(c.date)}${c.place?' · '+escHtml(c.place):''}</div>`:''}
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════════
-//  MODAL DETAIL
-// ═══════════════════════════════════════════
-function openModal(id) {
-  const c = cigars.find(x => x.id === id);
-  if (!c) return;
+// ── STATS ──
+function updateStats(){
+  const n=cigars.length;
+  const brands=new Set(cigars.map(c=>c.brand)).size;
+  const avg=n?(cigars.reduce((s,c)=>s+c.rating,0)/n).toFixed(1):'—';
+  const topBrand=n?Object.entries(cigars.reduce((m,c)=>{m[c.brand]=(m[c.brand]||0)+1;return m;},{})).sort((a,b)=>b[1]-a[1])[0][0]:'—';
+  const year=new Date().getFullYear();
+  const smoked=cigars.filter(c=>c.date&&c.date.startsWith(year)).length;
+  document.getElementById('statTotal').textContent=n;
+  document.getElementById('statBrands').textContent=brands;
+  document.getElementById('statAvg').textContent=avg==='—'?'—':'★ '+avg;
+  document.getElementById('statTop').textContent=topBrand;
+  document.getElementById('statYear').textContent=smoked||'—';
+}
 
-  const agRows = AGENCIES.map(a => {
-    const v = c.agencies?.[a.key];
-    if (!v) return '';
-    const diff = c.myScore ? c.myScore - v : null;
-    const diffHtml = diff !== null
-      ? `<span class="diff-badge ${diff>0?'diff-pos':diff<0?'diff-neg':'diff-neu'}">${diff>0?'+':''}${diff}</span>`
-      : '';
-    return `<tr><td><span class="${a.cls}">${a.label}</span></td><td class="score-cell score-agency">${v}</td><td>${diffHtml}</td></tr>`;
+// ── MODAL ──
+window.openModal = function(id){
+  const c=cigars.find(x=>x.id===id); if(!c)return;
+  const ag=[{k:'ca',l:'Cigar Aficionado'},{k:'cj',l:'Cigar Journal'},{k:'hw',l:'Half Wheel'},{k:'bmp',l:"Blind Man's Puff"}];
+  const agRows=ag.filter(a=>c.agencies?.[a.k]).map(a=>{
+    const v=c.agencies[a.k]; const diff=c.myScore?c.myScore-v:null;
+    const dh=diff!==null?`<span class="diff-badge ${diff>0?'diff-pos':diff<0?'diff-neg':'diff-neu'}">${diff>0?'+':''}${diff}</span>`:'';
+    return `<tr><td>${escHtml(a.l)}</td><td class="score-cell score-agency">${v}</td><td>${dh}</td></tr>`;
   }).join('');
-
-  const allAgScores = AGENCIES.map(a => c.agencies?.[a.key]).filter(Boolean);
-  const avgAg = allAgScores.length ? (allAgScores.reduce((s,v)=>s+v,0)/allAgScores.length).toFixed(1) : null;
-
-  document.getElementById('modalContent').innerHTML = `
+  const allS=ag.map(a=>c.agencies?.[a.k]).filter(Boolean);
+  const avgAg=allS.length?(allS.reduce((s,v)=>s+v,0)/allS.length).toFixed(1):null;
+  document.getElementById('modalContent').innerHTML=`
     <div class="modal-brand">${escHtml(c.brand)}</div>
     <h2>${escHtml(c.name)}</h2>
     <div class="modal-stars">${'★'.repeat(c.rating)}${'☆'.repeat(5-c.rating)}</div>
-
-    <div class="modal-section">
-      <h4>Dettagli</h4>
-      <p><strong>Origine:</strong> ${c.origin||'—'} &nbsp;·&nbsp; <strong>Formato:</strong> ${c.format||'—'} &nbsp;·&nbsp; <strong>Wrapper:</strong> ${c.wrapper||'—'}</p>
-      <p><strong>Forza:</strong> ${STRENGTH_LABELS[c.strength]} &nbsp;·&nbsp; <strong>Prezzo:</strong> ${c.price ? '€ '+c.price : '—'}</p>
-      ${c.date ? `<p><strong>Data:</strong> ${formatDate(c.date)}${c.place ? ' &nbsp;·&nbsp; <strong>Luogo:</strong> '+escHtml(c.place) : ''}</p>` : ''}
+    <div class="modal-section"><h4>Dettagli</h4>
+      <p><strong>Origine:</strong> ${c.origin||'—'} · <strong>Formato:</strong> ${c.format||'—'} · <strong>Wrapper:</strong> ${c.wrapper||'—'}</p>
+      <p><strong>Forza:</strong> ${STRENGTH_LABELS[c.strength]} · <strong>Prezzo:</strong> ${c.price?'€ '+c.price:'—'}</p>
+      ${c.date?`<p><strong>Data:</strong> ${formatDate(c.date)}${c.place?' · <strong>Luogo:</strong> '+escHtml(c.place):''}</p>`:''}
     </div>
-
-    ${c.notes ? `<div class="modal-section"><h4>Note di Degustazione</h4><p class="modal-notes">${escHtml(c.notes)}</p></div>` : ''}
-
-    ${c.myScore || agRows ? `
-    <div class="modal-section">
-      <h4>Confronto Punteggi</h4>
-      <table class="mini-table">
-        <thead><tr><th>Fonte</th><th>Voto</th><th>Diff.</th></tr></thead>
-        <tbody>
-          ${c.myScore ? `<tr class="my-row"><td>⭐ Il Mio Voto</td><td class="score-cell">${c.myScore}/100</td><td>—</td></tr>` : ''}
-          ${agRows}
-          ${avgAg && allAgScores.length > 1 ? `<tr><td><em>Media Agenzie</em></td><td class="score-cell score-agency">${avgAg}</td>
-            ${c.myScore ? `<td><span class="diff-badge ${c.myScore-avgAg>0?'diff-pos':c.myScore-avgAg<0?'diff-neg':'diff-neu'}">${c.myScore-avgAg>0?'+':''}${(c.myScore-avgAg).toFixed(1)}</span></td>` : '<td></td>'}
-          </tr>` : ''}
-        </tbody>
-      </table>
-    </div>` : ''}
-  `;
+    ${c.notes?`<div class="modal-section"><h4>Note di Degustazione</h4><p class="modal-notes">${escHtml(c.notes)}</p></div>`:''}
+    ${c.myScore||agRows?`<div class="modal-section"><h4>Confronto Punteggi</h4>
+      <table class="mini-table"><thead><tr><th>Fonte</th><th>Voto</th><th>Diff.</th></tr></thead><tbody>
+        ${c.myScore?`<tr class="my-row"><td>⭐ Il Mio Voto</td><td class="score-cell">${c.myScore}/100</td><td>—</td></tr>`:''}
+        ${agRows}
+        ${avgAg&&allS.length>1?`<tr><td><em>Media Agenzie</em></td><td class="score-cell score-agency">${avgAg}</td>
+          ${c.myScore?`<td><span class="diff-badge ${c.myScore-avgAg>0?'diff-pos':c.myScore-avgAg<0?'diff-neg':'diff-neu'}">${c.myScore-avgAg>0?'+':''}${(c.myScore-avgAg).toFixed(1)}</span></td>`:'<td></td>'}
+        </tr>`:''}
+      </tbody></table></div>`:''}`;
   document.getElementById('modalOverlay').classList.add('open');
 }
+window.closeModal=function(e){ if(e.target===document.getElementById('modalOverlay'))document.getElementById('modalOverlay').classList.remove('open'); }
 
-function closeModal(e) {
-  if (e.target === document.getElementById('modalOverlay'))
-    document.getElementById('modalOverlay').classList.remove('open');
+// ── TAB NAVIGATION ──
+window.switchTab = function(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='compare')renderCompTable();
+  if(id==='charts')renderCharts();
+  if(id==='top')renderTop();
+  if(id==='admin')renderAdmin();
 }
 
-// ═══════════════════════════════════════════
-//  STATS
-// ═══════════════════════════════════════════
-function updateStats() {
-  const n = cigars.length;
-  const brands = new Set(cigars.map(c => c.brand)).size;
-  const avg = n ? (cigars.reduce((s,c) => s+c.rating, 0)/n).toFixed(1) : '—';
-  const topBrand = n ? Object.entries(cigars.reduce((m,c) => { m[c.brand]=(m[c.brand]||0)+1; return m; },{}))
-    .sort((a,b)=>b[1]-a[1])[0][0] : '—';
-  const thisYear = new Date().getFullYear();
-  const smoked = cigars.filter(c => c.date && c.date.startsWith(thisYear)).length;
-
-  document.getElementById('statTotal').textContent = n;
-  document.getElementById('statBrands').textContent = brands;
-  document.getElementById('statAvg').textContent = avg === '—' ? '—' : '★ '+avg;
-  document.getElementById('statTop').textContent = topBrand;
-  document.getElementById('statSmoked').textContent = smoked || '—';
-}
-
-// ═══════════════════════════════════════════
-//  COMPARISON TABLE
-// ═══════════════════════════════════════════
-function getCompData() {
-  return cigars.map(c => {
-    const scores = AGENCIES.map(a => c.agencies?.[a.key]).filter(Boolean);
-    const avgAgency = scores.length ? scores.reduce((s,v)=>s+v,0)/scores.length : null;
-    const delta = (c.myScore && avgAgency) ? c.myScore - avgAgency : null;
-    return { ...c, avgAgency, delta };
-  });
-}
-
-function sortCompTable(col) {
-  if (compSortCol === col) compSortDir *= -1;
-  else { compSortCol = col; compSortDir = -1; }
-  renderCompTable();
-}
-
-function renderCompTable() {
-  const data = getCompData().sort((a,b) => {
-    const va = a[compSortCol] ?? -999;
-    const vb = b[compSortCol] ?? -999;
-    if (typeof va === 'string') return va.localeCompare(vb) * compSortDir;
-    return (va - vb) * compSortDir;
-  });
-
-  document.getElementById('compTableBody').innerHTML = data.map(c => {
-    const agCells = AGENCIES.map(a => {
-      const v = c.agencies?.[a.key];
-      return v ? `<td class="score-cell score-agency">${v}</td>` : `<td><span class="score-na">N/D</span></td>`;
-    }).join('');
-    const avgHtml = c.avgAgency ? `<td class="score-cell score-agency">${c.avgAgency.toFixed(1)}</td>` : `<td><span class="score-na">—</span></td>`;
-    const deltaHtml = c.delta !== null
-      ? `<td><span class="diff-badge ${c.delta>0?'diff-pos':c.delta<0?'diff-neg':'diff-neu'}">${c.delta>0?'+':''}${c.delta.toFixed(1)}</span></td>`
-      : `<td><span class="score-na">—</span></td>`;
-
-    return `<tr>
-      <td>${escHtml(c.brand)}</td>
-      <td>${escHtml(c.name)}</td>
-      <td class="score-cell score-mine">${c.myScore ?? '—'}</td>
-      ${agCells}
-      ${avgHtml}
-      ${deltaHtml}
-    </tr>`;
+// ── COMPARE TABLE ──
+function renderCompTable(){
+  document.getElementById('compTableBody').innerHTML=cigars.map(c=>{
+    const ag=[c.agencies?.ca,c.agencies?.cj,c.agencies?.hw,c.agencies?.bmp];
+    const scores=ag.filter(Boolean);
+    const avg=scores.length?(scores.reduce((s,v)=>s+v,0)/scores.length):null;
+    const delta=(c.myScore&&avg)?c.myScore-avg:null;
+    const agCells=ag.map(v=>v?`<td class="score-cell score-agency">${v}</td>`:`<td><span class="score-na">N/D</span></td>`).join('');
+    const deltaHtml=delta!==null?`<td><span class="diff-badge ${delta>0?'diff-pos':delta<0?'diff-neg':'diff-neu'}">${delta>0?'+':''}${delta.toFixed(1)}</span></td>`:`<td><span class="score-na">—</span></td>`;
+    return `<tr><td>${escHtml(c.brand)}</td><td>${escHtml(c.name)}</td>
+      <td class="score-cell score-mine">${c.myScore||'—'}</td>${agCells}
+      <td class="score-cell score-agency">${avg?avg.toFixed(1):'—'}</td>${deltaHtml}</tr>`;
   }).join('');
-
-  // Update sort arrows
-  document.querySelectorAll('.comp-table th').forEach(th => {
-    th.classList.remove('sorted');
-    const arrow = th.querySelector('.sort-arrow');
-    if (arrow) arrow.textContent = '↕';
-  });
 }
 
-// ═══════════════════════════════════════════
-//  CHARTS
-// ═══════════════════════════════════════════
-function getChartColors() {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  return {
-    text: dark ? '#D4C4A8' : '#4A3020',
-    grid: dark ? 'rgba(201,168,76,0.08)' : 'rgba(107,58,31,0.1)',
-    gold: '#C9A84C',
-  };
+// ── CHARTS ──
+function chartOpts(cc){ return { responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false,labels:{color:cc.text,font:{family:'Cormorant Garamond',size:12}}}},scales:{x:{ticks:{color:cc.text,font:{family:'Cormorant Garamond',size:11}},grid:{color:cc.grid}},y:{ticks:{color:cc.text,font:{family:'Cormorant Garamond',size:11}},grid:{color:cc.grid}}}}; }
+function dChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+function renderCharts(){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  const cc={text:dark?'#D4C4A8':'#4A3020',grid:dark?'rgba(201,168,76,0.08)':'rgba(107,58,31,0.1)'};
+  const p=['#C9A84C','#9BC4E2','#A8D8A8','#C9A0DC','#E8A87A','#7EC87A','#C87A7A'];
+  dChart('rating');
+  charts.rating=new Chart(document.getElementById('chartRating'),{type:'bar',data:{labels:['★','★★','★★★','★★★★','★★★★★'],datasets:[{data:[1,2,3,4,5].map(r=>cigars.filter(c=>c.rating===r).length),backgroundColor:p[0]+'99',borderColor:p[0],borderWidth:1,borderRadius:3}]},options:chartOpts(cc)});
+  dChart('origin');
+  const om={};cigars.forEach(c=>{if(c.origin)om[c.origin]=(om[c.origin]||0)+1;});
+  const ok=Object.keys(om);
+  charts.origin=new Chart(document.getElementById('chartOrigin'),{type:'doughnut',data:{labels:ok,datasets:[{data:ok.map(k=>om[k]),backgroundColor:p.map(x=>x+'CC'),borderColor:'transparent'}]},options:{...chartOpts(cc),cutout:'55%'}});
+  dChart('brand');
+  const bm={};cigars.forEach(c=>{if(!bm[c.brand])bm[c.brand]=[];bm[c.brand].push(c.rating);});
+  const bk=Object.keys(bm).sort((a,b)=>(bm[b].reduce((s,v)=>s+v,0)/bm[b].length)-(bm[a].reduce((s,v)=>s+v,0)/bm[a].length)).slice(0,8);
+  charts.brand=new Chart(document.getElementById('chartBrand'),{type:'bar',data:{labels:bk,datasets:[{data:bk.map(k=>(bm[k].reduce((s,v)=>s+v,0)/bm[k].length).toFixed(2)),backgroundColor:p[1]+'99',borderColor:p[1],borderWidth:1,borderRadius:3}]},options:{...chartOpts(cc),scales:{...chartOpts(cc).scales,y:{...chartOpts(cc).scales?.y,min:0,max:5}}}});
+  dChart('strength');
+  charts.strength=new Chart(document.getElementById('chartStrength'),{type:'bar',data:{labels:STRENGTH_LABELS.slice(1),datasets:[{data:[1,2,3,4,5].map(s=>cigars.filter(c=>c.strength===s).length),backgroundColor:['#7EC87A99','#A8D8A899','#C9A84C99','#E8A87A99','#C87A7A99'],borderColor:['#7EC87A','#A8D8A8','#C9A84C','#E8A87A','#C87A7A'],borderWidth:1,borderRadius:3}]},options:chartOpts(cc)});
+  dChart('compare');
+  const cd=cigars.filter(c=>c.myScore).map(c=>{const s=[c.agencies?.ca,c.agencies?.cj,c.agencies?.hw,c.agencies?.bmp].filter(Boolean);return{label:c.name,mine:c.myScore,avg:s.length?+(s.reduce((a,v)=>a+v,0)/s.length).toFixed(1):null};});
+  if(cd.length){charts.compare=new Chart(document.getElementById('chartCompare'),{type:'line',data:{labels:cd.map(d=>d.label),datasets:[{label:'Il Mio Voto',data:cd.map(d=>d.mine),borderColor:p[0],backgroundColor:p[0]+'22',pointBackgroundColor:p[0],tension:.3,fill:false},{label:'Media Agenzie',data:cd.map(d=>d.avg),borderColor:p[1],backgroundColor:p[1]+'22',pointBackgroundColor:p[1],tension:.3,fill:false,borderDash:[5,3]}]},options:{...chartOpts(cc),plugins:{legend:{display:true,labels:{color:cc.text,font:{family:'Cormorant Garamond',size:12}}}},scales:{...chartOpts(cc).scales,y:{...chartOpts(cc).scales?.y,min:50,max:100}}}});}
+  else{const el=document.getElementById('chartCompare');if(el)el.parentElement.innerHTML='<p style="text-align:center;color:var(--text2);padding:40px;font-style:italic">Aggiungi punteggi numerici e voti agenzie per visualizzare il confronto.</p>';}
 }
 
-function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+// ── TOP ──
+function renderTop(){
+  const sorted=[...cigars].sort((a,b)=>(b.myScore||b.rating*20)-(a.myScore||a.rating*20));
+  const medals=['🥇','🥈','🥉'];
+  const podiumEl=document.getElementById('podium');
+  const top3=sorted.slice(0,3);
+  if(!top3.length){podiumEl.innerHTML='<p style="color:var(--text2);font-style:italic">Nessun sigaro ancora.</p>';}
+  else{
+    const order=top3.length>=2?[top3[1],top3[0],top3[2]].filter(Boolean):top3;
+    podiumEl.innerHTML=order.map((c,i)=>{const rank=top3.indexOf(c);const h=['190px','230px','160px'];return`<div class="podium-item" style="${rank===0?'':'margin-bottom:20px'}"><div class="podium-box ${rank===0?'podium-1':''}" style="min-height:${top3.length>=2?h[i]:'230px'}" onclick="openModal('${c.id}')"><div class="podium-rank">${medals[rank]}</div><div class="podium-brand">${escHtml(c.brand)}</div><div class="podium-name">${escHtml(c.name)}</div><div class="podium-stars">${'★'.repeat(c.rating)}</div>${c.myScore?`<div style="margin-top:7px;font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)">${c.myScore}</div><div style="font-size:.6rem;color:var(--text2);letter-spacing:.15em">/100</div>`:''}<div class="podium-bar"></div></div></div>`;}).join('');
+  }
+  document.getElementById('topTableBody').innerHTML=sorted.map((c,i)=>`<tr onclick="openModal('${c.id}')" style="cursor:pointer"><td style="color:var(--text2);font-size:.82rem">${i+1}</td><td style="color:var(--gold);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase">${escHtml(c.brand)}</td><td style="font-family:'Playfair Display',serif">${escHtml(c.name)}</td><td style="color:var(--gold)">${'★'.repeat(c.rating)}</td><td style="font-family:'Playfair Display',serif;color:var(--gold)">${c.myScore||'—'}</td><td style="font-size:.78rem;color:var(--text2)">${c.origin||'—'}</td><td style="font-size:.78rem;color:var(--text2)">${c.date?formatDate(c.date):'—'}</td></tr>`).join('');
+}
 
-function renderCharts() {
-  const cc = getChartColors();
-  const palette = ['#C9A84C','#9BC4E2','#A8D8A8','#C9A0DC','#E8A87A','#7EC87A','#C87A7A'];
+// ── ADMIN ──
+async function renderAdmin(){
+  if(!currentUser||currentUser.uid!==OWNER_UID){
+    document.getElementById('adminTableBody').innerHTML='<tr><td colspan="4" style="text-align:center;color:#C87A7A;padding:20px">Accesso non autorizzato</td></tr>';
+    return;
+  }
+  try {
+    const snap=await getDocs(collection(db,'registrations'));
+    const regs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    // Count cigars per user
+    const cigarSnap=await getDocs(collection(db,'cigars'));
+    const cigarCounts={};
+    cigarSnap.docs.forEach(d=>{const uid=d.data().uid;cigarCounts[uid]=(cigarCounts[uid]||0)+1;});
 
-  // Rating distribution
-  destroyChart('rating');
-  const ratCount = [1,2,3,4,5].map(r => cigars.filter(c=>c.rating===r).length);
-  charts.rating = new Chart(document.getElementById('chartRating'), {
-    type: 'bar',
-    data: {
-      labels: ['★','★★','★★★','★★★★','★★★★★'],
-      datasets: [{ data: ratCount, backgroundColor: palette[0]+'99', borderColor: palette[0], borderWidth: 1, borderRadius: 3 }]
-    },
-    options: chartOpts(cc)
-  });
+    document.getElementById('adminStats').innerHTML=`
+      <div class="admin-stat-card"><span class="admin-stat-num">${regs.length}</span><span class="admin-stat-label">Utenti Registrati</span></div>
+      <div class="admin-stat-card"><span class="admin-stat-num">${cigarSnap.size}</span><span class="admin-stat-label">Sigari Totali (tutti)</span></div>
+      <div class="admin-stat-card"><span class="admin-stat-num">${regs.filter(r=>{const d=r.joinedAt?.toDate?.();return d&&d.getFullYear()===new Date().getFullYear();}).length}</span><span class="admin-stat-label">Nuovi Quest'Anno</span></div>`;
 
-  // Origin pie
-  destroyChart('origin');
-  const origMap = {};
-  cigars.forEach(c => { if (c.origin) origMap[c.origin] = (origMap[c.origin]||0)+1; });
-  const origKeys = Object.keys(origMap);
-  charts.origin = new Chart(document.getElementById('chartOrigin'), {
-    type: 'doughnut',
-    data: {
-      labels: origKeys,
-      datasets: [{ data: origKeys.map(k=>origMap[k]), backgroundColor: palette.map(p=>p+'CC'), borderColor: 'transparent' }]
-    },
-    options: { ...chartOpts(cc), cutout: '55%' }
-  });
-
-  // Brand avg score
-  destroyChart('brand');
-  const brandMap = {};
-  cigars.forEach(c => { if (!brandMap[c.brand]) brandMap[c.brand]=[]; brandMap[c.brand].push(c.rating); });
-  const brandKeys = Object.keys(brandMap).sort((a,b)=>{
-    const av = brandMap[a].reduce((s,v)=>s+v,0)/brandMap[a].length;
-    const bv = brandMap[b].reduce((s,v)=>s+v,0)/brandMap[b].length;
-    return bv-av;
-  }).slice(0,8);
-  charts.brand = new Chart(document.getElementById('chartBrand'), {
-    type: 'bar',
-    data: {
-      labels: brandKeys,
-      datasets: [{ data: brandKeys.map(k=>(brandMap[k].reduce((s,v)=>s+v,0)/brandMap[k].length).toFixed(2)),
-        backgroundColor: palette[1]+'99', borderColor: palette[1], borderWidth: 1, borderRadius: 3 }]
-    },
-    options: { ...chartOpts(cc), scales: { ...chartOpts(cc).scales, y: { ...chartOpts(cc).scales?.y, min:0, max:5 } } }
-  });
-
-  // Strength
-  destroyChart('strength');
-  const strCount = [1,2,3,4,5].map(s => cigars.filter(c=>c.strength===s).length);
-  charts.strength = new Chart(document.getElementById('chartStrength'), {
-    type: 'bar',
-    data: {
-      labels: STRENGTH_LABELS.slice(1),
-      datasets: [{ data: strCount, backgroundColor: ['#7EC87A99','#A8D8A899','#C9A84C99','#E8A87A99','#C87A7A99'],
-        borderColor: ['#7EC87A','#A8D8A8','#C9A84C','#E8A87A','#C87A7A'], borderWidth: 1, borderRadius: 3 }]
-    },
-    options: chartOpts(cc)
-  });
-
-  // Compare line: my score vs agencies
-  destroyChart('compare');
-  const compData = cigars.filter(c => c.myScore).map(c => {
-    const scores = AGENCIES.map(a=>c.agencies?.[a.key]).filter(Boolean);
-    return { label: c.name, mine: c.myScore, avg: scores.length ? +(scores.reduce((s,v)=>s+v,0)/scores.length).toFixed(1) : null };
-  });
-  if (compData.length) {
-    charts.compare = new Chart(document.getElementById('chartCompare'), {
-      type: 'line',
-      data: {
-        labels: compData.map(d=>d.label),
-        datasets: [
-          { label: 'Il Mio Voto', data: compData.map(d=>d.mine), borderColor: palette[0], backgroundColor: palette[0]+'22', pointBackgroundColor: palette[0], tension: 0.3, fill: false },
-          { label: 'Media Agenzie', data: compData.map(d=>d.avg), borderColor: palette[1], backgroundColor: palette[1]+'22', pointBackgroundColor: palette[1], tension: 0.3, fill: false, borderDash: [5,3] },
-        ]
-      },
-      options: { ...chartOpts(cc), scales: { ...chartOpts(cc).scales, y: { ...chartOpts(cc).scales?.y, min:50, max:100 } } }
-    });
-  } else {
-    document.getElementById('chartCompare').parentElement.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;font-style:italic">Aggiungi punteggi numerici (50–100) e voti agenzie per visualizzare il confronto.</p>';
+    document.getElementById('adminTableBody').innerHTML=regs.length?regs.map(r=>{
+      const d=r.joinedAt?.toDate?.();
+      const dateStr=d?`${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`:'—';
+      const n=cigarCounts[r.id]||0;
+      return `<tr>
+        <td><span class="code-badge">${r.anonCode||'—'}</span></td>
+        <td><span class="joined-date">📅 ${dateStr}</span></td>
+        <td style="font-family:'Playfair Display',serif;color:var(--gold)">${n}</td>
+        <td><span style="font-size:.72rem;color:#7EC87A">● Attivo</span></td>
+      </tr>`;
+    }).join(''):`<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text2);font-style:italic">Nessun utente registrato ancora.</td></tr>`;
+  } catch(e){
+    document.getElementById('adminTableBody').innerHTML=`<tr><td colspan="4" style="color:#C87A7A;padding:14px">Errore: ${e.message}</td></tr>`;
   }
 }
 
-function chartOpts(cc) {
-  return {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false, labels: { color: cc.text, font: { family: 'Cormorant Garamond', size: 12 } } } },
-    scales: {
-      x: { ticks: { color: cc.text, font: { family: 'Cormorant Garamond', size: 11 } }, grid: { color: cc.grid } },
-      y: { ticks: { color: cc.text, font: { family: 'Cormorant Garamond', size: 11 } }, grid: { color: cc.grid } }
-    }
-  };
+// ── EXPORT CSV ──
+window.exportCSV = function(){
+  if(!cigars.length){showToast('Nessun sigaro da esportare');return;}
+  const headers=['Marca','Nome','Origine','Formato','Wrapper','Stelle','Punteggio','Forza','CA','CJ','HW','BMP','Note','Data','Prezzo','Luogo'];
+  const rows=cigars.map(c=>[c.brand,c.name,c.origin,c.format,c.wrapper,c.rating,c.myScore||'',STRENGTH_LABELS[c.strength],c.agencies?.ca||'',c.agencies?.cj||'',c.agencies?.hw||'',c.agencies?.bmp||'',(c.notes||'').replace(/"/g,'""'),c.date,c.price,c.place].map(v=>`"${v||''}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='il_mio_humidor.csv';a.click();
+  URL.revokeObjectURL(url);showToast('📤 CSV esportato!');
 }
-
-// ═══════════════════════════════════════════
-//  TOP / PODIUM
-// ═══════════════════════════════════════════
-function renderTop() {
-  const sorted = [...cigars].sort((a,b) => {
-    const sa = a.myScore || a.rating*20;
-    const sb = b.myScore || b.rating*20;
-    return sb - sa;
-  });
-
-  // Podium
-  const medals = ['🥇','🥈','🥉'];
-  const podiumEl = document.getElementById('podium');
-  const top3 = sorted.slice(0,3);
-  if (!top3.length) { podiumEl.innerHTML = '<p style="color:var(--text2);font-style:italic">Nessun sigaro ancora.</p>'; }
-  else {
-    const order = top3.length >= 2 ? [top3[1], top3[0], top3[2]].filter(Boolean) : top3;
-    podiumEl.innerHTML = order.map((c, i) => {
-      const rank = top3.indexOf(c);
-      const heights = ['180px','220px','150px'];
-      const h = top3.length >= 2 ? heights[i] : '220px';
-      return `<div class="podium-item" style="margin-bottom:${rank===0?'0':'20px'}">
-        <div class="podium-box" style="min-height:${h}" onclick="openModal(${c.id})">
-          <div class="podium-rank">${medals[rank]}</div>
-          <div class="podium-brand">${escHtml(c.brand)}</div>
-          <div class="podium-name">${escHtml(c.name)}</div>
-          <div class="podium-stars">${'★'.repeat(c.rating)}</div>
-          ${c.myScore ? `<div style="margin-top:8px;font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold)">${c.myScore}</div><div style="font-size:0.65rem;color:var(--text2);letter-spacing:.15em">/100</div>` : ''}
-          <div class="podium-bar"></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  // Table
-  document.getElementById('topTableBody').innerHTML = sorted.map((c,i) => `
-    <tr onclick="openModal(${c.id})" style="cursor:pointer">
-      <td style="color:var(--text2);font-size:0.85rem">${i+1}</td>
-      <td style="color:var(--gold);font-size:0.7rem;letter-spacing:.2em;text-transform:uppercase">${escHtml(c.brand)}</td>
-      <td style="font-family:'Playfair Display',serif">${escHtml(c.name)}</td>
-      <td style="color:var(--gold)">${'★'.repeat(c.rating)}</td>
-      <td style="font-family:'Playfair Display',serif;color:var(--gold)">${c.myScore||'—'}</td>
-      <td style="font-size:.8rem;color:var(--text2)">${c.origin||'—'}</td>
-      <td style="font-size:.8rem;color:var(--text2)">${c.date?formatDate(c.date):'—'}</td>
-    </tr>`).join('');
-}
-
-// ═══════════════════════════════════════════
-//  EXPORT CSV
-// ═══════════════════════════════════════════
-function exportCSV() {
-  if (!cigars.length) { showToast('Nessun sigaro da esportare'); return; }
-  const headers = ['Marca','Nome','Origine','Formato','Wrapper','Stelle','Punteggio','Forza',
-    'Cigar Aficionado','Cigar Journal','Half Wheel',"Blind Man's Puff",'Note','Data','Prezzo','Luogo'];
-  const rows = cigars.map(c => [
-    c.brand, c.name, c.origin, c.format, c.wrapper, c.rating, c.myScore||'',
-    STRENGTH_LABELS[c.strength],
-    c.agencies?.cigarAficionado||'', c.agencies?.cigarJournal||'',
-    c.agencies?.halfWheel||'', c.agencies?.blindMansPuff||'',
-    c.notes?.replace(/"/g,'""'), c.date, c.price, c.place
-  ].map(v => `"${v||''}"`).join(','));
-  const csv = [headers.join(','), ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'il_mio_humidor.csv'; a.click();
-  URL.revokeObjectURL(url);
-  showToast('📤 CSV esportato!');
-}
-
-// ═══════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function formatDate(d) {
-  if (!d) return '';
-  const [y,m,day] = d.split('-');
-  return `${day}/${m}/${y}`;
-}
-
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-renderCards();
-updateStats();
-updateFilters();
 </script>
 </body>
 </html>
