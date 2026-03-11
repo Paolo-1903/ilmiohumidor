@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Mio Humidor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tobacco: #3B1F0A;
+    --cedar: #6B3A1F;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --cream: #F5EDD8;
+    --ash: #D4C4A8;
+    --smoke: #8B7355;
+    --dark: #1A0D05;
+    --leaf: #4A2C10;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--dark);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(201,168,76,0.03) 2px,
+        rgba(201,168,76,0.03) 4px
+      ),
+      radial-gradient(ellipse at top, #2A1208 0%, #0D0603 70%);
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 200px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .logo-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    display: block;
+    filter: drop-shadow(0 0 20px rgba(201,168,76,0.4));
+    animation: floatSmoke 3s ease-in-out infinite;
+  }
+
+  @keyframes floatSmoke {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--smoke);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    font-weight: 300;
+  }
+
+  .ornament {
+    color: var(--gold);
+    font-size: 1.2rem;
+    margin: 16px 0;
+    opacity: 0.6;
+    letter-spacing: 0.5em;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--smoke);
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .container { grid-template-columns: 1fr; }
+  }
+
+  /* FORM */
+  .form-panel {
+    background: linear-gradient(160deg, rgba(107,58,31,0.15) 0%, rgba(26,13,5,0.6) 100%);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 2px;
+    padding: 32px;
+    position: sticky;
+    top: 20px;
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .field-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    margin-bottom: 6px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--cream);
+    padding: 10px 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    border-radius: 1px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: rgba(201,168,76,0.6);
+    box-shadow: 0 0 0 2px rgba(201,168,76,0.08);
+  }
+
+  select option { background: var(--tobacco); }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  /* RATING STARS */
+  .stars-input {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .stars-input span {
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: rgba(201,168,76,0.25);
+    transition: color 0.15s, transform 0.15s;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .stars-input span:hover,
+  .stars-input span.active {
+    color: var(--gold);
+    transform: scale(1.15);
+  }
+
+  /* STRENGTH SLIDER */
+  input[type="range"] {
+    padding: 0;
+    border: none;
+    background: transparent;
+    -webkit-appearance: none;
+    height: 4px;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct, 50%), rgba(201,168,76,0.2) var(--pct, 50%));
+    border-radius: 2px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-top: -5px;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(201,168,76,0.5);
+  }
+
+  .strength-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--smoke);
+    margin-top: 4px;
+  }
+
+  /* SUBMIT BUTTON */
+  .btn-add {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--cedar), var(--tobacco));
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.25s;
+    margin-top: 8px;
+  }
+
+  .btn-add:hover {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--dark);
+    box-shadow: 0 4px 24px rgba(201,168,76,0.3);
+  }
+
+  /* COLLECTION */
+  .collection-panel {}
+
+  .collection-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .panel-title-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 6px 16px;
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--smoke);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* SEARCH */
+  .search-box {
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .search-box input {
+    padding-left: 36px;
+  }
+
+  .search-box::before {
+    content: '🔍';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    opacity: 0.5;
+    z-index: 1;
+  }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: linear-gradient(160deg, rgba(107,58,31,0.12) 0%, rgba(26,13,5,0.5) 100%);
+    border: 1px solid rgba(201,168,76,0.18);
+    border-radius: 2px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    animation: cardIn 0.4s ease both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(201,168,76,0.4);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.08);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle at top right, rgba(201,168,76,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-brand {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .card-stars {
+    color: var(--gold);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--smoke);
+    border-radius: 1px;
+  }
+
+  .tag.origin { color: #A0C878; border-color: rgba(160,200,120,0.3); }
+  .tag.format { color: #C8A878; border-color: rgba(200,168,120,0.3); }
+
+  .card-notes {
+    font-size: 0.9rem;
+    color: var(--ash);
+    line-height: 1.5;
+    font-style: italic;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding-top: 10px;
+    margin-top: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-strength {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--smoke);
+  }
+
+  .strength-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(201,168,76,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .strength-fill {
+    height: 100%;
+    background: linear-gradient(to right, #A0C878, var(--gold), #C85050);
+    border-radius: 2px;
+  }
+
+  .card-date {
+    font-size: 0.65rem;
+    color: rgba(139,115,85,0.5);
+    margin-top: 10px;
+  }
+
+  .card-delete {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: transparent;
+    border: none;
+    color: rgba(200,80,80,0.3);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+
+  .card-delete:hover { color: rgba(200,80,80,0.9); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--smoke);
+    grid-column: 1/-1;
+  }
+
+  .empty-state .big-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .empty-state h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 8px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--cedar);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 14px 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 100;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    color: var(--smoke);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo-icon">🚬</span>
+  <h1>Il Mio Humidor</h1>
+  <p class="subtitle">Diario Personale dei Sigari</p>
+  <div class="ornament">— ✦ —</div>
+</header>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat">
+    <span class="stat-num" id="statTotal">0</span>
+    <span class="stat-label">Sigari Recensiti</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="statBrands">0</span>
+    <span class="stat-label">Marche Diverse</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="statAvg">—</span>
+    <span class="stat-label">Voto Medio</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="statTop">—</span>
+    <span class="stat-label">Migliore</span>
+  </div>
+</div>
+
+<div class="container">
+  <!-- FORM -->
+  <div class="form-panel">
+    <div class="panel-title">✦ Aggiungi Sigaro</div>
+
+    <div class="field-group">
+      <label>Marca / Manifattura</label>
+      <input type="text" id="fBrand" placeholder="es. Cohiba, Padron, Oliva…">
+    </div>
+
+    <div class="field-group">
+      <label>Nome / Vitola</label>
+      <input type="text" id="fName" placeholder="es. Robusto, Torpedo, Churchill…">
+    </div>
+
+    <div class="field-group">
+      <label>Paese d'Origine</label>
+      <select id="fOrigin">
+        <option value="">— Seleziona —</option>
+        <option>Cuba</option>
+        <option>Nicaragua</option>
+        <option>Repubblica Dominicana</option>
+        <option>Honduras</option>
+        <option>Ecuador</option>
+        <option>Brasile</option>
+        <option>Messico</option>
+        <option>Jamaica</option>
+        <option>Indonesia</option>
+        <option>USA</option>
+        <option>Italia</option>
+        <option>Camerun</option>
+        <option>Altro</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label>Formato</label>
+      <select id="fFormat">
+        <option value="">— Seleziona —</option>
+        <option>Robusto</option>
+        <option>Torpedo / Belicoso</option>
+        <option>Churchill</option>
+        <option>Corona</option>
+        <option>Toro</option>
+        <option>Lancero / Panetela</option>
+        <option>Gordo / Gigante</option>
+        <option>Petit Corona</option>
+        <option>Figurado</option>
+        <option>Perfecto</option>
+        <option>Otro</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label>Valutazione</label>
+      <div class="stars-input" id="starsInput">
+        <span data-v="1">★</span>
+        <span data-v="2">★</span>
+        <span data-v="3">★</span>
+        <span data-v="4">★</span>
+        <span data-v="5">★</span>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Forza / Corpo <span id="strengthVal" style="color:var(--gold)">Media</span></label>
+      <input type="range" id="fStrength" min="1" max="5" value="3">
+      <div class="strength-labels">
+        <span>Leggero</span>
+        <span>Medio</span>
+        <span>Forte</span>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Note di Degustazione</label>
+      <textarea id="fNotes" placeholder="Aromi, sapori, retrogusto, costruzione, tiraggio…"></textarea>
+    </div>
+
+    <div class="field-group">
+      <label>Data Fumata</label>
+      <input type="date" id="fDate">
+    </div>
+
+    <div class="field-group">
+      <label>Prezzo (€)</label>
+      <input type="number" id="fPrice" placeholder="es. 15" min="0" step="0.5">
+    </div>
+
+    <button class="btn-add" onclick="addCigar()">✦ Aggiungi alla Collezione</button>
+  </div>
+
+  <!-- COLLECTION -->
+  <div class="collection-panel">
+    <div class="collection-header">
+      <div class="panel-title-main">La Collezione</div>
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" onclick="setFilter('all', this)">Tutti</button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Cerca per nome, marca, note…" oninput="renderCards()">
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="ornament" style="margin-bottom:8px">— ✦ —</div>
+  Il Mio Humidor · Diario Personale dei Sigari<br>
+  <small style="opacity:0.5">I dati sono salvati localmente nel browser</small>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let cigars = JSON.parse(localStorage.getItem('humidor_cigars') || '[]');
+let selectedRating = 0;
+let activeFilter = 'all';
+
+// Init date
+document.getElementById('fDate').valueAsDate = new Date();
+
+// Stars
+const stars = document.querySelectorAll('#starsInput span');
+stars.forEach(s => {
+  s.addEventListener('mouseover', () => highlightStars(+s.dataset.v));
+  s.addEventListener('mouseout', () => highlightStars(selectedRating));
+  s.addEventListener('click', () => { selectedRating = +s.dataset.v; highlightStars(selectedRating); });
+});
+
+function highlightStars(n) {
+  stars.forEach(s => s.classList.toggle('active', +s.dataset.v <= n));
+}
+
+// Strength slider
+const slider = document.getElementById('fStrength');
+const strengthLabels = ['', 'Leggero', 'Medio-Leggero', 'Medio', 'Medio-Forte', 'Forte'];
+slider.addEventListener('input', () => {
+  const pct = (slider.value - 1) / 4 * 100;
+  slider.style.setProperty('--pct', pct + '%');
+  document.getElementById('strengthVal').textContent = strengthLabels[slider.value];
+});
+slider.dispatchEvent(new Event('input'));
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function save() {
+  localStorage.setItem('humidor_cigars', JSON.stringify(cigars));
+}
+
+function addCigar() {
+  const brand = document.getElementById('fBrand').value.trim();
+  const name = document.getElementById('fName').value.trim();
+  if (!brand || !name) { showToast('⚠ Inserisci marca e nome'); return; }
+  if (!selectedRating) { showToast('⚠ Seleziona una valutazione'); return; }
+
+  const cigar = {
+    id: Date.now(),
+    brand,
+    name,
+    origin: document.getElementById('fOrigin').value,
+    format: document.getElementById('fFormat').value,
+    rating: selectedRating,
+    strength: +document.getElementById('fStrength').value,
+    notes: document.getElementById('fNotes').value.trim(),
+    date: document.getElementById('fDate').value,
+    price: document.getElementById('fPrice').value,
+  };
+
+  cigars.unshift(cigar);
+  save();
+  resetForm();
+  renderCards();
+  updateStats();
+  updateFilters();
+  showToast('✦ Sigaro aggiunto alla collezione!');
+}
+
+function resetForm() {
+  ['fBrand','fName','fNotes','fPrice'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fOrigin').value = '';
+  document.getElementById('fFormat').value = '';
+  selectedRating = 0;
+  highlightStars(0);
+  slider.value = 3;
+  slider.dispatchEvent(new Event('input'));
+  document.getElementById('fDate').valueAsDate = new Date();
+}
+
+function deleteCigar(id) {
+  cigars = cigars.filter(c => c.id !== id);
+  save();
+  renderCards();
+  updateStats();
+  updateFilters();
+  showToast('Sigaro rimosso');
+}
+
+function setFilter(val, btn) {
+  activeFilter = val;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+function updateFilters() {
+  const brands = [...new Set(cigars.map(c => c.brand))];
+  const row = document.getElementById('filterRow');
+  row.innerHTML = `<button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="setFilter('all',this)">Tutti</button>`;
+  brands.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (activeFilter === b ? ' active' : '');
+    btn.textContent = b;
+    btn.onclick = function() { setFilter(b, this); };
+    row.appendChild(btn);
+  });
+}
+
+function updateStats() {
+  const n = cigars.length;
+  const brands = new Set(cigars.map(c => c.brand)).size;
+  const avg = n ? (cigars.reduce((s,c) => s+c.rating,0)/n).toFixed(1) : '—';
+  const top = n ? cigars.reduce((a,b) => a.rating>=b.rating?a:b).brand : '—';
+  document.getElementById('statTotal').textContent = n;
+  document.getElementById('statBrands').textContent = brands;
+  document.getElementById('statAvg').textContent = avg === '—' ? '—' : '★ ' + avg;
+  document.getElementById('statTop').textContent = top;
+}
+
+function renderCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let list = cigars;
+  if (activeFilter !== 'all') list = list.filter(c => c.brand === activeFilter);
+  if (q) list = list.filter(c =>
+    (c.brand+c.name+c.notes+c.origin+c.format).toLowerCase().includes(q)
+  );
+
+  const grid = document.getElementById('cardsGrid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <span class="big-icon">🚬</span>
+      <h3>${cigars.length ? 'Nessun risultato trovato' : "L'humidor è vuoto"}</h3>
+      <p>${cigars.length ? 'Prova a cambiare i filtri' : 'Aggiungi il tuo primo sigaro!'}</p>
+    </div>`;
+    return;
+  }
+
+  const strengthLabels2 = ['', 'Leggero', 'Medio-Leggero', 'Medio', 'Medio-Forte', 'Forte'];
+  grid.innerHTML = list.map(c => `
+    <div class="card">
+      <button class="card-delete" onclick="deleteCigar(${c.id})" title="Rimuovi">✕</button>
+      <div class="card-brand">${escHtml(c.brand)}</div>
+      <div class="card-name">${escHtml(c.name)}</div>
+      <div class="card-stars">${'★'.repeat(c.rating)}${'☆'.repeat(5-c.rating)}</div>
+      <div class="card-tags">
+        ${c.origin ? `<span class="tag origin">${escHtml(c.origin)}</span>` : ''}
+        ${c.format ? `<span class="tag format">${escHtml(c.format)}</span>` : ''}
+        ${c.price ? `<span class="tag">€ ${escHtml(c.price)}</span>` : ''}
+      </div>
+      ${c.notes ? `<div class="card-notes">${escHtml(c.notes)}</div>` : ''}
+      <div class="card-strength">
+        <span>${strengthLabels2[c.strength]}</span>
+        <div class="strength-bar">
+          <div class="strength-fill" style="width:${(c.strength-1)/4*100}%"></div>
+        </div>
+      </div>
+      ${c.date ? `<div class="card-date">Fumato il ${formatDate(c.date)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+// Init
+renderCards();
+updateStats();
+updateFilters();
+</script>
+</body>
+</html>
